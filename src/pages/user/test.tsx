@@ -23,6 +23,8 @@ const Profile: React.FC = () => {
 
   const handleItemClick = (component: React.ReactNode, name: string) => {
     setActiveComponent(component);
+    console.log(component,name,'this is the------------------');
+    
     setActiveItem(name);
   };
 
@@ -44,18 +46,18 @@ const Profile: React.FC = () => {
 
   return (
     <div className='w-full h-screen overflow-hidden'>
-      <div className='h-full flex bg--100 relative'>
-        <div className={`bg-white h-full border-r border-slate-200 transition-all duration-300 ease-in-out 
+      <div className='h-full flex bg--100 '>
+        <div className={ `bg--500 h-full transition-all duration-300 ease-in-out border-r border-slate-100
                          ${isSmallScreen ? (isSidebarOpen ? 'w-16' : 'w-0') : 'w-16'} 
-                         overflow-hidden -z-50`}>
+                         overflow-hidden `}>
           <NavSidebar />
         </div>
-        <div className='flex-1 h-screen overflow-hidden flex flex-col'>
+        <div className=' flex-1 h-screen overflow-hidden flex flex-col'>
           <CategoryNavbar toggleSidebar={toggleSidebar} />
-          <div className='flex-1 flex overflow-hidden relative'>
-            <div className={`bg-white absolute top-0 left-0 h-full transition-all duration-300 ease-in-out 
-                             ${isSmallScreen ? (isSidebarOpen ? 'w-[300px]' : 'w-0') : 'w-[300px]'} 
-                             overflow-hidden z-40`}>
+          <div className='flex-1 flex  relative'>
+            <div className={`bg-white border-r border-slate-100 w-full absolute top-0 left-0 h-full transition-all duration-300 ease-in-out 
+                             ${isSmallScreen ? (isSidebarOpen ? 'w-[299px]' : 'w-0') : 'w-[299px] bg--300'} 
+                             overflow-hidden z-50`}>
               <Sidebar
                 items={sidebarItems.map(item => ({
                   name: item.name,
@@ -78,3 +80,5 @@ const Profile: React.FC = () => {
 };
 
 export default Profile;
+
+

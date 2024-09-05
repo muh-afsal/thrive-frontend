@@ -1,7 +1,7 @@
 import React from "react";
 import { Navigate, Outlet } from "react-router-dom";
 import { useAppSelector } from "../hook";
-import { RootState } from "../store";
+import { RootState } from "../redux/store";
 
 interface PublicRouteProps {
   restricted?: boolean;

@@ -1,19 +1,19 @@
-
+import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import {  AppDispatch } from "../../store";
-import { login } from "../../redux/actions/authAction";
+import { AppDispatch } from "../../redux/store";
+import { login, googleLoginOrSignUp } from "../../redux/actions/auth";
 import { Helmet } from "react-helmet";
 import { Link } from "react-router-dom";
 import { GoogleLogin } from "@react-oauth/google";
 import Header from "../../components/navbars/AuthNavbar";
 import * as Yup from "yup";
 import { useFormik } from "formik";
-import { selectAuthState } from "../../redux/reducers/authSlice";
+import { selectAuthState } from "../../redux/reducers/user/authSlice";
 
 const validationSchema = Yup.object().shape({
   email: Yup.string().email("Invalid email address").required("Email is required"),
-  password: Yup.string().min(6, "Password must be at least 6 characters").required("Password is required"),
+  password: Yup.string().min(6, "Password must be at least 8 characters").required("Password is required"),
 });
 
 const Login: React.FC = () => {
@@ -31,13 +31,25 @@ const Login: React.FC = () => {
       try {
         const resultAction = await dispatch(login(values));
         if (login.fulfilled.match(resultAction)) {
-          navigate("/home"); 
+          navigate("/home");
         }
       } catch (error: unknown) {
         console.log(error, "Error during login");
       }
     },
   });
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const handleGoogleLogin = async (credentialResponse: any) => {
+    try {
+      const resultAction = await dispatch(googleLoginOrSignUp(credentialResponse));
+      if (googleLoginOrSignUp.fulfilled.match(resultAction)) {
+        navigate("/home");
+      }
+    } catch (error: unknown) {
+      console.log("Google login failed", error);
+    }
+  };
 
   return (
     <>
@@ -95,13 +107,9 @@ const Login: React.FC = () => {
                 <p>or</p>
                 <div className="flex justify-center w-full">
                   <GoogleLogin
-                    onSuccess={(credentialResponse) => {
-                      console.log(credentialResponse);
-                      // loginWithGoogle(credentialResponse);
-                    }}
+                    onSuccess={handleGoogleLogin}
                     onError={() => {
                       console.log("Login Failed");
-                      // toast.error("Something is wrong! Please try later");
                     }}
                     size="large"
                     shape="circle"
@@ -112,7 +120,7 @@ const Login: React.FC = () => {
               <p className="mt-5 text-sm font-semibold text-gray-500">
                 Don't have an account? 
                 <Link to="/signup">
-                  <span className="text-thrive-blue"> Sign Up</span>
+                  <span className="text-thirve-blue"> Sign Up</span>
                 </Link>
               </p>
             </div>

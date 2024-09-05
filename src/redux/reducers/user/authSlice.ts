@@ -1,15 +1,12 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../../store';
-import { AuthResponse, AuthState } from '../../types/IAuth';
-import { login, signup, verifyOtp } from '../actions/authAction';
-import Cookies from 'js-cookie';
+import { AuthResponse, AuthState } from '../../../types/IAuth';
+import { signup, verifyOtp, login, googleLoginOrSignUp } from '../../actions/auth';
 
-// Initial state
 const initialState: AuthState = {
-  email: null,
   isLoading: false,
+  data: null,
   error: null,
-  isAuthenticated: false, // Add this line
 };
 
 const authSlice = createSlice({
@@ -17,8 +14,7 @@ const authSlice = createSlice({
   initialState,
   reducers: {
     logout: (state) => {
-      state.isAuthenticated = false;
-      state.email = null;
+      state.data = null;
       state.error = null;
     }
   },
@@ -30,13 +26,13 @@ const authSlice = createSlice({
       })
       .addCase(signup.fulfilled, (state, action: PayloadAction<AuthResponse>) => {
         state.isLoading = false;
-        state.email = action.payload.user;
-        state.isAuthenticated = !!action.payload.user;
+        state.data = action.payload;
+        state.error = null;
       })
       .addCase(signup.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload as string;
-        state.isAuthenticated = false;
+        state.data = null;
       })
       .addCase(verifyOtp.pending, (state) => {
         state.isLoading = true;
@@ -44,9 +40,8 @@ const authSlice = createSlice({
       })
       .addCase(verifyOtp.fulfilled, (state, action: PayloadAction<boolean>) => {
         state.isLoading = false;
-        state.isAuthenticated = action.payload;
         if (!action.payload) {
-          state.email = null;
+          state.data = null;
           state.error = 'OTP verification failed';
         } else {
           state.error = null;
@@ -55,7 +50,7 @@ const authSlice = createSlice({
       .addCase(verifyOtp.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload as string;
-        state.isAuthenticated = false;
+        state.data = null;
       })
       .addCase(login.pending, (state) => {
         state.isLoading = true;
@@ -63,14 +58,27 @@ const authSlice = createSlice({
       })
       .addCase(login.fulfilled, (state, action: PayloadAction<AuthResponse>) => {
         state.isLoading = false;
-        state.email = action.payload.user;
-        state.isAuthenticated = !action.payload.user; 
-        Cookies.set('auths', JSON.stringify(action.payload.user));
+        state.data = action.payload;
+        state.error = null;
       })
       .addCase(login.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload as string;
-        state.isAuthenticated = false;
+        state.data = null;
+      })
+      .addCase(googleLoginOrSignUp.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(googleLoginOrSignUp.fulfilled, (state, action: PayloadAction<AuthResponse>) => {
+        state.isLoading = false;
+        state.data = action.payload;
+        state.error = null;
+      })
+      .addCase(googleLoginOrSignUp.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload as string;
+        state.data = null;
       });
   },
 });
@@ -78,5 +86,4 @@ const authSlice = createSlice({
 export const { logout } = authSlice.actions;
 export default authSlice.reducer;
 
-// Selector to get auth state
 export const selectAuthState = (state: RootState) => state.auth;

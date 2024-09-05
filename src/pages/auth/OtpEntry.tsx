@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { RootState, AppDispatch } from "../../store";
-import { verifyOtp } from "../../redux/actions/authAction";
+import { RootState, AppDispatch } from "../../redux/store";
+import { verifyOtp } from "../../redux/actions/auth";
 import { useNavigate, useLocation } from "react-router-dom";
 import Header from "../../components/navbars/AuthNavbar";
 import { Helmet } from "react-helmet";
@@ -76,7 +76,7 @@ const OtpEntry: React.FC = () => {
         const responsePayload = resultAction.payload;
 
         if (responsePayload) {
-          navigate("/home");
+          navigate("/completeprofile");
         } else {
           setErrors("OTP verification failed. Please try again.");
         }

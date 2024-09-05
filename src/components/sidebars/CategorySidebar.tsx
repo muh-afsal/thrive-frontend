@@ -14,7 +14,7 @@ interface SidebarProps {
 
 const Sidebar: React.FC<SidebarProps> = ({ items, activeItem }) => {
   return (
-    <div className='w-[300px] h-[92.3%] border-r border-gray-200 flex justify-center'>
+    <div className=' w-[300px] h-[92.3%] border-r border-gray-200 flex justify-center'>
       <ul>
         <div className='h-[230px] border-b border-gray-200 mb-10 flex flex-col justify-center items-center'>
           <div className='w-[110px] h-[110px] bg-red-300 rounded-2xl'></div>

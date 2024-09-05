@@ -26,6 +26,11 @@ export default function Header() {
                 About
               </li>
             </Link>
+            <Link to="/profile">
+              <li className="text-slate-500 rounded-md px-3 py-1 font-semibold bg-transparent">
+                profile
+              </li>
+            </Link>
           </ul>
         </div>
         {/* <Link to="/signup">
