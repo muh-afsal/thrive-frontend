@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useState } from "react";
+// import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState, AppDispatch } from "../../redux/store";
 import { googleLoginOrSignUp, signup } from "../../redux/actions/auth";
@@ -10,8 +10,6 @@ import { GoogleLogin } from "@react-oauth/google";
 import { Link } from "react-router-dom";
 import { Formik, Field, Form, ErrorMessage } from "formik";
 import * as Yup from "yup";
-import Modal from "../../components/modals/ConfirmationModal";
-import forgetPasswordImage from "@/assets/images/signup/forgetpasswordimage.png";
 
 const validationSchema = Yup.object({
   firstname: Yup.string().trim().required("First name is required"),
@@ -30,18 +28,12 @@ const validationSchema = Yup.object({
     .oneOf([Yup.ref("password")], "Passwords must match"),
 });
 
-const forgotPasswordValidationSchema = Yup.object({
-  verifyemail: Yup.string()
-    .trim()
-    .email("Invalid email address")
-    .required("Email is required"),
-});
+
 
 const SignUp: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
   const { isLoading, error } = useSelector((state: RootState) => state.auth);
-  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const loginWithGoogle = async (data: any) => {
     try {
@@ -54,14 +46,6 @@ const SignUp: React.FC = () => {
     } catch (error: unknown) {
       console.error("Error during Google login/signup", error);
     }
-  };
-
-  const handleForgetPassword = () => {
-    setIsModalOpen(true);
-  };
-
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
   };
 
   return (
@@ -199,14 +183,7 @@ const SignUp: React.FC = () => {
                     {isLoading || isSubmitting ? "Loading..." : "Sign Up"}
                   </button>
 
-                  <div>
-                    <p
-                      className="text-blue-700 hover:cursor-pointer text-sm font-medium"
-                      onClick={handleForgetPassword}
-                    >
-                      Forgot password?
-                    </p>
-                  </div>
+                 
 
                   <p className="mb-[-10px]">or</p>
 
@@ -236,66 +213,6 @@ const SignUp: React.FC = () => {
           </div>
         </div>
       </section>
-
-      {/* Modal for forgot password */}
-      {isModalOpen && (
-        <Modal size={"w-[350px]"} onClose={handleCloseModal}>
-          <h1 className="text-2xl text-center font-extrabold mb-5">Forgot Password?</h1>
-          <h1 className="text-xs text-slate-600 text-center font-semibold">
-            Enter the email address associated with your account and we'll send you a link to reset your password.
-          </h1>
-          <img
-            src={forgetPasswordImage}
-            alt="Forget password"
-            className="h-[120px] mx-auto mt-7 mb-7"
-          />
-          <Formik
-            initialValues={{
-              verifyemail: "",
-            }}
-            validationSchema={forgotPasswordValidationSchema}
-            onSubmit={async (values) => {
-              try {
-                // Handle forgot password logic here
-                console.log(values);
-              } catch (error: unknown) {
-                console.log(error, "Error during forgot password");
-              }
-            }}
-          >
-            {({ isSubmitting }) => (
-              <Form className="mt-4">
-                <div className="relative flex flex-col w-full">
-                  <Field
-                    type="text"
-                    placeholder="Enter your email"
-                    id="verifyemail"
-                    name="verifyemail"
-                    className="bg-slate-100 p-2 rounded-lg w-full border border-gray-300 focus:border-blue-300 focus:outline-none  focus:ring-blue-500"
-                  />
-                  <ErrorMessage
-                    name="verifyemail"
-                    component="div"
-                    className="text-red-500 text-sm text-left mt-1"
-                  />
-                </div>
-
-                <button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="bg-thirve-blue w-full text-white font-semibold p-2 rounded-lg  hover:opacity-80 disabled:opacity-80 mt-5"
-                >
-                  {isSubmitting ? "Loading..." : "Submit"}
-                </button>
-                <p className="mt-5 text-sm font-semibold text-center text-gray-500">
-                Don't have an account? 
-                  <span className="text-thirve-blue" onClick={handleCloseModal}> Sign Up</span>
-              </p>
-              </Form>
-            )}
-          </Formik>
-        </Modal>
-      )}
     </>
   );
 };

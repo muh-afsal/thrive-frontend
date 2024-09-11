@@ -29,8 +29,11 @@ export interface CompleteProfilePayload {
 
 
 export interface VerifyOtpPayload {
-  email: User | null;
+  email: string| User | null;
   otp: string;
+}
+export interface ResendOtpPayload {
+  email: User | null;
 }
 
 export interface LoginPayload {

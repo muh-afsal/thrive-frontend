@@ -11,6 +11,8 @@ import { toast } from "react-toastify";
 import cloudinaryUpload from "@/utils/cloudinary/cloudinaryService";
 import { FaSpinner } from "react-icons/fa";
 import { fetchUser } from "@/redux/actions/user/fetchUserActions";
+import { logout } from "@/redux/actions/user/logoutUserActions";
+import { useNavigate } from "react-router-dom";
 
 const GeneralInfo: React.FC = () => {
   const [preview, setPreview] = useState<string | null>(null);
@@ -19,12 +21,13 @@ const GeneralInfo: React.FC = () => {
   const [editingBio, setEditingBio] = useState<boolean>(false);
   const { data } = useSelector((state: RootState) => state.user);
   const dispatch = useDispatch<AppDispatch>();
+  const navigate = useNavigate();
   const userId = data?._id;
+
+ 
 
   const defaultAvatarUrl =
     "https://res.cloudinary.com/djo6yu43t/image/upload/v1725124534/IMG_20240831_224439_v7rnsg.jpg";
-
-  
 
   const formik = useFormik({
     initialValues: {
@@ -49,7 +52,6 @@ const GeneralInfo: React.FC = () => {
         bio: values.bio || data?.bio || "",
       };
 
-      // console.log(payload, "this is the payload");
 
       setLoading(true);
 
@@ -124,9 +126,14 @@ const GeneralInfo: React.FC = () => {
     formik.setFieldValue("phone", value);
   };
 
+  const handleLogout = async () => {
+    await dispatch(logout());
+    navigate("/login");
+  };
+
   return (
     <section className="bg--400 w-full h-full">
-      <div className="bg--400 w-full h-[70px] flex items-center pl-11 pt-4">
+      <div className="bg--400 w-full h-[70px] border-b  flex items-center pl-11 pt-4">
         <h1 className="text-2xl font-semibold">General Information</h1>
       </div>
       <div className="w-full h-5/6 flex justify-center bg--400 pt-6 items-center">
@@ -138,7 +145,7 @@ const GeneralInfo: React.FC = () => {
             <div className="bg--300 w-full flex flex-col justify-center h-[40%] px-5 pl-7 bg-cover bg-center border-b border-slate-100 mb-10">
               <div className="flex">
                 <div className="flex flex-row bg--200 w-[20%]">
-                  <div className="bg--300 relative w-28 h-28 rounded-full border overflow-hidden mb-2">
+                  <div className="bg--300 relative w-28 h-28 rounded-full border overflow-hidden mb-2 shadow-sm">
                     {imageUploading ? (
                       <div className="flex justify-center items-center w-full h-full bg-gray-200">
                         <FaSpinner className="animate-spin text-gray-500 text-3xl" />
@@ -329,8 +336,10 @@ const GeneralInfo: React.FC = () => {
                 <button
                   type="button"
                   className="rounded-md bg-red-600 text-white font-semibold p-2"
+                  onClick={handleLogout}
+                  disabled={loading}
                 >
-                  Logout
+                  {loading ? "Logging out..." : "Logout"}
                 </button>
               </div>
             </div>

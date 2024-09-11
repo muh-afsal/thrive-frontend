@@ -1,4 +1,6 @@
+import { RootState } from '@/redux/store';
 import React from 'react';
+import { useSelector } from 'react-redux';
 
 interface SidebarItem {
   name: string;
@@ -9,16 +11,25 @@ interface SidebarItem {
 
 interface SidebarProps {
   items: SidebarItem[];
-  activeItem: string; // Add activeItem prop to track the active item
+  activeItem: string; 
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ items, activeItem }) => {
+
+  const { data } = useSelector((state: RootState) => state.user);
+  const profileimage=data?.profileImage;
+  
+   
+
+
   return (
     <div className=' w-[300px] h-[92.3%] border-r border-gray-200 flex justify-center'>
       <ul>
         <div className='h-[230px] border-b border-gray-200 mb-10 flex flex-col justify-center items-center'>
-          <div className='w-[110px] h-[110px] bg-red-300 rounded-2xl'></div>
-          <h1 className='font-semibold text-lg mt-4'>UserName</h1>
+          <div className='w-[110px] h-[110px] overflow-hidden bg-red-300 rounded-2xl profilepic shadow-lg'>
+            <img className='object-cover w-full h-full ' src={profileimage} alt="" />
+          </div>
+          <h1 className='font-semibold text-lg mt-4'>{data?.firstname} {data?.lastname}</h1>
         </div>
         {items.map((item) => (
           <div

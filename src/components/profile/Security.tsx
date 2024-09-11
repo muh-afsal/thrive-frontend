@@ -31,9 +31,9 @@ const Generalnfo: React.FC = () => {
       .required('Confirm Password is required'),
   });
 
-  const onSubmit = async (values: { createPassword: string }) => {
+  const onSubmit = async (values: { confirmPassword: string }) => {
     const formData = {
-      password: values.createPassword,
+      password: values.confirmPassword,
     };
     setLoading(true);
 

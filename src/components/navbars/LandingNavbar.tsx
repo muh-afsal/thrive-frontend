@@ -3,7 +3,7 @@ import logo from "@/assets/iocns/thive-logo.png";
 
 export default function Header() {
   return (
-    <div className="bg-transparent">
+    <div className="bg-transparent bg--400">
       <div className="flex justify-around items-center mx-auto p-3 bg-transparent">
         <div className="flex justify-between items-center bg-transparent">
           <Link to="/">

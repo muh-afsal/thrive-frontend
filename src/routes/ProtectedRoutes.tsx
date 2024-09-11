@@ -1,12 +1,11 @@
 import React from "react";
 import { Navigate, Outlet } from "react-router-dom";
-// import { useAppSelector } from "../hook";
-// import { RootState } from "../store";
+import { decodeAccessToken } from "../utils/jwt/jwtService"; // Assuming your decodeAccessToken function is in this file
 
 const ProtectedRoutes: React.FC = () => {
-  const auth={'token':true}
-  
-return (auth.token ? <Outlet/> : <Navigate to="/login"/>) ;
+  const token = decodeAccessToken(); 
+
+  return token ? <Outlet /> : <Navigate to="/login" />;
 };
 
 export default ProtectedRoutes;

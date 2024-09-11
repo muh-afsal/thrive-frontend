@@ -45,9 +45,9 @@ const Profile: React.FC = () => {
   return (
     <div className='w-full h-screen overflow-hidden'>
       <div className='h-full flex bg--100 relative'>
-        <div className={`bg-white h-full border-r border-slate-200 transition-all duration-300 ease-in-out 
+        <div className={`bg--400 h-full border-r border-slate-200 transition-all duration-300 ease-in-out 
                          ${isSmallScreen ? (isSidebarOpen ? 'w-16' : 'w-0') : 'w-16'} 
-                         overflow-hidden -z-50`}>
+                         overflow-hidden z-50`}>
           <NavSidebar />
         </div>
         <div className='flex-1 h-screen overflow-hidden flex flex-col'>
