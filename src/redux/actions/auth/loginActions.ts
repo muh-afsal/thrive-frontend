@@ -9,6 +9,8 @@ export const login = createAsyncThunk<AuthResponse, LoginPayload>(
   async (payload, thunkAPI) => {
     try {
       const response = await CLIENT_API.post('/auth/login', payload);
+      console.log(response,'_________________________');
+      
       return response.data;
     } catch (error: any) {
       return thunkAPI.rejectWithValue(error.response?.data?.errors[0]?.message || "An unknown error occurred");

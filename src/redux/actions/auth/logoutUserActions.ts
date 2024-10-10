@@ -7,7 +7,7 @@ export const logout = createAsyncThunk<void, void, { rejectValue: string }>(
   'user/logout',
   async (_, thunkAPI) => {
     try {
-      const response = await CLIENT_API.post('/user/logout'); 
+      const response = await CLIENT_API.post('/auth/user/logout'); 
       console.log(response);
       
       return;

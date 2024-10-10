@@ -1,13 +1,14 @@
-import { CLIENT_API } from '@/axios';
-import { config } from '@/common/configuratoins';
-import { RootState } from '@/redux/store';
-import { loadStripe } from '@stripe/stripe-js';
-import React, { useState } from 'react';
-import { useSelector } from 'react-redux';
+import { CLIENT_API } from "@/axios";
+import { config } from "@/common/configuratoins";
+import { RootState } from "@/redux/store";
+import { loadStripe } from "@stripe/stripe-js";
+import React, { useState } from "react";
+import { useSelector } from "react-redux";
 
 const ProVersionPayment: React.FC = () => {
   const { data } = useSelector((state: RootState) => state.user);
-  const [message, setMessage] = useState<string>(''); 
+  const [message, setMessage] = useState<string>("");
+
   const handleProceedToPayment = async () => {
     try {
       const stripe = await loadStripe(
@@ -19,10 +20,14 @@ const ProVersionPayment: React.FC = () => {
         email: data?.email,
       };
 
-      const response = await CLIENT_API.post('/user/create-checkout-session', payload, config);
+      const response = await CLIENT_API.post(
+        "/payment/create-checkout-session",
+        payload,
+        config
+      );
 
       console.log(response);
-      
+
       if (response?.data?.error) {
         setMessage(response.data.error);
         return;
@@ -34,7 +39,7 @@ const ProVersionPayment: React.FC = () => {
         });
       }
     } catch (error) {
-      setMessage('An error occurred while processing your payment.');
+      setMessage("An error occurred while processing your payment.");
     }
   };
 
@@ -45,8 +50,8 @@ const ProVersionPayment: React.FC = () => {
           Go Pro with Our Application
         </h1>
         <p className="text-lg text-gray-600 text-center mb-8">
-          Unlock all the premium features with the Pro version of our app. Enjoy advanced tools, priority support,
-          and much more!
+          Unlock all the premium features with the Pro version of our app. Enjoy
+          advanced tools, priority support, and much more!
         </p>
 
         <div className="border border-gray-200 rounded-lg p-4 mb-8">
@@ -57,7 +62,9 @@ const ProVersionPayment: React.FC = () => {
             <li>Access to exclusive content</li>
             <li>Access to video feature</li>
           </ul>
-          <p className="text-xl font-semibold text-gray-800 mt-4">Price: 1499₹/-</p>
+          <p className="text-xl font-semibold text-gray-800 mt-4">
+            Price: 1499₹/-
+          </p>
         </div>
 
         <button
@@ -67,9 +74,7 @@ const ProVersionPayment: React.FC = () => {
           Proceed to Payment
         </button>
 
-        {message && (
-          <p className="text-red-500 text-center mt-4">{message}</p> 
-        )}
+        {message && <p className="text-red-500 text-center mt-4">{message}</p>}
       </div>
     </div>
   );

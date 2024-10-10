@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { RootState, AppDispatch } from "../../redux/store";
+import { RootState, AppDispatch } from "../../../redux/store";
 import { useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet";
 import { Formik, Field, Form, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { FaCamera } from "react-icons/fa";
 import { completeProfile } from "@/redux/actions/user/completeProfileActions";
-import cloudinaryUpload from '../../utils/cloudinary/cloudinaryService'; 
+import   cloudinaryimageUpload  from '../../../utils/cloudinary/cloudinaryService'; 
 
 const validationSchema = Yup.object({
   phone: Yup.string()
@@ -31,7 +31,7 @@ const CompleteProfile: React.FC = () => {
   const [profileImage, setProfileImage] = useState<string | null>(null);
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
-  const { isLoading, error } = useSelector((state: RootState) => state.auth);
+  const { isLoading, error } = useSelector((state: RootState) => state.user);
 
   const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -41,7 +41,7 @@ const CompleteProfile: React.FC = () => {
       setProfileImage(localUrl);
 
       try {
-        const cloudinaryUrl = await cloudinaryUpload(file);
+        const cloudinaryUrl = await cloudinaryimageUpload(file);
         setProfileImage(cloudinaryUrl); 
       } catch (error) {
         console.error('Error uploading image to Cloudinary', error);

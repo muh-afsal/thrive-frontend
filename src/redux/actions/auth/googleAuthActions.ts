@@ -9,7 +9,9 @@ export const googleLoginOrSignUp = createAsyncThunk(
   async (userCredentials: IGoogleAuth, thunkAPI) => {
     try {
       const response = await CLIENT_API.post('/auth/google', userCredentials);
-      return response.data;
+      console.log('google auth data',response.data.data);
+      
+      return response.data.data;
     } catch (error: any) {
       return thunkAPI.rejectWithValue(error.response?.data?.errors[0]?.message || "An unknown error occurred");
     }

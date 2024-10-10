@@ -11,7 +11,7 @@ import Header from "../../components/navbars/AuthNavbar";
 import * as Yup from "yup";
 import { useFormik } from "formik";
 import { Formik, Field, Form, ErrorMessage, FormikHelpers } from "formik";
-import { selectAuthState } from "../../redux/reducers/user/authSlice";
+import { selectUserState } from "../../redux/reducers/user/userSlice";
 import ForgetOtpEntry from "@/components/signup/ForgetOtpEntry";
 import forgetPasswordImage from '@/assets/images/signup/forgetpasswordimage.png';
 import Modal from "@/components/modals/ConfirmationModal";
@@ -33,7 +33,7 @@ const forgotPasswordValidationSchema = Yup.object({
 const Login: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
-  const { isLoading, error } = useSelector(selectAuthState);
+  const { isLoading, error } = useSelector(selectUserState);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isOtpForm, setIsOtpForm] = useState(false);
   const [forgotEmail, setForgotEmail] = useState("");
@@ -126,9 +126,10 @@ const Login: React.FC = () => {
       </Helmet>
       <div className="">
         <Header />
-        <section className="w-full h-screen pt-7 px-3 flex justify-center ">
-          <div className="w-full h-[80%] flex justify-center pb-4 items-center flex-col">
-            <div className="flex flex-col justify-center items-center text-center p-4 mb-4">
+        <section className="w-full h-screen pt-7 px-3 flex justify-center bg-white dark:bg-dark-bg dark:text-dark-text">
+          <div className="w-full dark:mt-11 h-[80%] flex justify-center pb-4 items-center flex-col">
+           <div className="bg-white dark:bg-neutral-900 flex flex-col items-center p-7 lg:p9 rounded-xl ">
+            <div className="flex flex-col bg--400 justify-center items-center text-center p-4 mb-4">
               <h1 className="mb-2 font-extrabold text-2xl lg:text-3xl">
                 Welcome to Thrive,
               </h1>
@@ -139,27 +140,27 @@ const Login: React.FC = () => {
                 Enter your details to proceed further
               </h4>
             </div>
-            <div className="flex w-[80%] md:w-[400px] flex-col justify-center bg-grey-400 items-center text-center ">
+            <div className="flex w-[100%] bg--500 md:w-[400px] flex-col justify-center bg-grey-400 items-center text-center ">
               <form onSubmit={formik.handleSubmit} className="flex flex-col gap-4 w-full">
                 <input
                   type="text"
                   placeholder="Email"
                   id="email"
-                  className="bg-slate-100 p-2 rounded-lg w-full border border-gray-200 focus:border-blue-200 focus:outline-none focus:ring-blue-500"
+                  className="bg-slate-100 p-2 rounded-lg w-full   dark:bg-neutral-800 dark:border-neutral-600 dark:text-white border border-gray-200 focus:border-blue-200 focus:outline-none focus:ring-blue-500"
                   {...formik.getFieldProps('email')}
                 />
                 {formik.touched.email && formik.errors.email ? (
-                  <div className="text-red-500 text-sm">{formik.errors.email}</div>
+                  <div className="text-red-500 text-sm mt-[-10px] flex justify-start">{formik.errors.email}</div>
                 ) : null}
                 <input
                   type="password"
                   placeholder="Password"
                   id="password"
-                  className="bg-slate-100 p-2 rounded-lg border border-gray-200 focus:border-blue-200 focus:outline-none focus:ring-blue-500"
+                  className="bg-slate-100 p-2 rounded-lg border  dark:bg-neutral-800 dark:border-neutral-600 dark:text-white border-gray-200 focus:border-blue-200 focus:outline-none focus:ring-blue-500"
                   {...formik.getFieldProps('password')}
                 />
                 {formik.touched.password && formik.errors.password ? (
-                  <div className="text-red-500 text-sm">{formik.errors.password}</div>
+                  <div className="text-red-500 text-sm mt-[-10px] flex justify-start">{formik.errors.password}</div>
                 ) : null}
                 <button
                   type="submit"
@@ -171,7 +172,7 @@ const Login: React.FC = () => {
                 {error && <div className="text-red-500 text-sm">{error}</div>}
                 <div>
                     <p
-                      className="text-blue-700 hover:cursor-pointer text-sm font-medium"
+                      className="text-blue-500 dark:to-blue-400 hover:cursor-pointer text-sm font-medium"
                       onClick={handleForgetPassword}
                     >
                       Forgot password?
@@ -190,14 +191,14 @@ const Login: React.FC = () => {
                   />
                 </div>
               </form>
-              <p className="mt-5 text-sm font-semibold text-gray-500">
+              <p className="mt-5 text-sm font-semibold text-gray-500 dark:text-white">
                 Don't have an account? 
                 <Link to="/signup">
-                  <span className="text-thirve-blue"> Sign Up</span>
+                  <span className="text-thirve-blue dark-links"> Sign Up</span>
                 </Link>
               </p>
             </div>
-            <div></div>
+            </div>
           </div>
         </section>
         {/* Modal for forgot password */}
@@ -211,7 +212,7 @@ const Login: React.FC = () => {
               >
                 {({ isSubmitting }) => (
                   <Form className="mt-4">
-                    <h1 className="text-2xl text-center font-extrabold mb-5">
+                    <h1 className="text-2xl dark-links  text-center font-extrabold mb-5">
                       Forgot Password?
                     </h1>
                     <h1 className="text-xs text-slate-600 text-center font-semibold">
@@ -241,7 +242,7 @@ const Login: React.FC = () => {
                     <button
                       type="submit"
                       disabled={isSubmitting}
-                      className="bg-thirve-blue w-full text-white font-semibold p-2 rounded-lg  hover:opacity-80 disabled:opacity-80 mt-5"
+                      className="bg-thirve-blue w-full text-white  font-semibold p-2 rounded-lg  hover:opacity-80 disabled:opacity-80 mt-5"
                     >
                       {isSubmitting ? "Loading..." : "Submit"}
                     </button>

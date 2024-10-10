@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import Footer from "@/components/Footer";
 import LandingNavbar from "@/components/navbars/LandingNavbar";
 import landingbg from "@/assets/images/landing/landingbg.png";
+import landingbgDark from "@/assets/images/landing/landingbgDark.png";
 import potratesImage from "@/assets/images/landing/potrait.png";
 import lnading1Image from "@/assets/images/landing/landing2.png";
 import serviceOffertingImage from "@/assets/images/landing/cartoon-ai-robot-scene.jpg";
@@ -12,13 +13,13 @@ import { Link } from "react-router-dom";
 
 const Landing: React.FC = () => {
   const [planMonthly, setPlan] = useState<boolean>(false);
-
+  const isDarkMode = document.documentElement.classList.contains('dark');
   return (
     <>
-      <div>
+      <div className=" dark:bg-dark-bg dark:text-white" >
         <section
-          className="h-[800px]  md:h-[700px] relative bg-cover bg-center"
-          style={{ backgroundImage: `url(${landingbg})` }}
+          className="h-[800px]  md:h-[700px] relative bg-cover  bg-center"
+          style={{  backgroundImage: `url(${isDarkMode ? landingbgDark : landingbg})`, }}
         >
           <LandingNavbar />
           <div className=" h-5/6  flex flex-col md:flex-row ">
@@ -89,7 +90,7 @@ const Landing: React.FC = () => {
             </div>
           </div>
         </section>
-        <section className=" h-[1600px]  md:h-[700px] flex items-center bg-blue-50">
+        <section className=" h-[1600px]  md:h-[700px] flex items-center bg-blue-50 dark:bg-neutral-800">
           <div className="h-[90%] w-screen flex flex-col md:flex-row items-center justify-center">
             <div className=" w h-[90%] xl:w-[95%] flex flex-col justify-center items-center ">
               <div className="w-full  ">
@@ -187,7 +188,7 @@ const Landing: React.FC = () => {
             </div>
           </div>
         </section>
-        <section className=" h-[700px]  md:h-[300px] flex items-center  bg-blue-50 justify-center">
+        <section className=" h-[700px]  md:h-[300px] flex items-center dark:bg-neutral-800  bg-blue-50 justify-center">
           <div className="w-[90%] md:w-[95%] lg:w-[70%] h-5/6 flex flex-col  md:flex md:flex-row md:justify-center md:items-center gap-8">
             <div className="w-full  h-2/6  md:h-5/6  p-3  flex flex-col justify-center items-center ">
               <h1 className="text-4xl md:text-5xl xl:text-5xl font-bold text-center  ">

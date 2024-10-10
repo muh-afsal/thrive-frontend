@@ -12,7 +12,9 @@ export const fetchUser = createAsyncThunk<AuthResponse, FetchUserParams>(
   '/user/fetchUser',
   async ({ userId }, thunkAPI) => {
     try {
-      const response = await CLIENT_API.get(`/user/getuserdata/${userId}`, config);
+      const response = await CLIENT_API.get(`/auth/user/getuserdata/${userId}`, config);
+      // console.log('fetch user data',response.data);
+      
       return response.data; 
     } catch (error: any) {
       return thunkAPI.rejectWithValue(error.response?.data?.message || "An unknown error occurred!");

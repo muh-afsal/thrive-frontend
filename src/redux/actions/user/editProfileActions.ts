@@ -3,6 +3,7 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import { AuthResponse,} from '@/types/IAuth';
 import { CLIENT_API } from '@/axios/index.ts';
 // import { configMultiPart } from '@/common/configuratoins'; 
+const UserUrl='/auth/user'
 
 
 export const editProfile = createAsyncThunk<AuthResponse, AuthResponse>(
@@ -12,7 +13,7 @@ export const editProfile = createAsyncThunk<AuthResponse, AuthResponse>(
     try {
       console.log(formData,'thisis is the edite d]&^^^^^^^^^^^^^^^^^^^^^^^^^66');
       
-      const response = await CLIENT_API.post('/user/editProfile',formData, {withCredentials:true});
+      const response = await CLIENT_API.post(`${UserUrl}/editProfile`,formData, {withCredentials:true});
       return response.data; 
     } catch (error: any) {
       return thunkAPI.rejectWithValue(error.response?.data?.message || "An unknown error occurred!");

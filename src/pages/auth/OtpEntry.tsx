@@ -26,7 +26,7 @@ const OtpEntry: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
   const location = useLocation();
-  const { isLoading } = useSelector((state: RootState) => state.auth);
+  const { isLoading } = useSelector((state: RootState) => state.user);
   const inputsRef = useRef<(HTMLInputElement | null)[]>([]);
   
   const formData = location.state?.formData;

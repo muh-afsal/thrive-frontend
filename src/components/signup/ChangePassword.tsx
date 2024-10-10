@@ -32,7 +32,7 @@ const ChangePassword: React.FC = () => {
     };
 
     try {
-       await CLIENT_API.post("/user/change-password", formData, {
+       await CLIENT_API.post("/auth/user/change-password", formData, {
         withCredentials: true,
       });
       navigate("/login"); 

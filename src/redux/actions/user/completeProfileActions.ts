@@ -10,7 +10,7 @@ export const completeProfile = createAsyncThunk<AuthResponse, CompleteProfilePay
   '/user/Completeprofile',
   async (formData, thunkAPI) => {
     try {
-      const response = await CLIENT_API.post('/user/completeprofile',formData, {withCredentials:true});
+      const response = await CLIENT_API.post('/auth/user/completeprofile',formData, {withCredentials:true});
       return response.data; 
     } catch (error: any) {
       return thunkAPI.rejectWithValue(error.response?.data?.message || "An unknown error occurred!");

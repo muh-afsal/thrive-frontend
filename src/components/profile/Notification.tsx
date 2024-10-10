@@ -1,6 +1,6 @@
 import React from 'react'
 
-const Generalnfo:React.FC = () => {
+const Notification:React.FC = () => {
   return (
     <div>
        notigivcatioin
@@ -8,4 +8,4 @@ const Generalnfo:React.FC = () => {
   )
 }
 
-export default Generalnfo
+export default Notification

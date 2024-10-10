@@ -33,7 +33,7 @@ const validationSchema = Yup.object({
 const SignUp: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
-  const { isLoading, error } = useSelector((state: RootState) => state.auth);
+  const { isLoading, error } = useSelector((state: RootState) => state.user);
 
   const loginWithGoogle = async (data: any) => {
     try {
@@ -56,16 +56,16 @@ const SignUp: React.FC = () => {
       <div>
         <Header />
       </div>
-      <section className="w-full h-screen pt-7 px-3 flex justify-center ">
-        <div className="w-full h-[80%] flex justify-center pt-9 items-center flex-col">
-          <div className="flex flex-col justify-center items-center text-center p-4 mb-4">
-            <h1 className="mb-2 font-extrabold text-2xl lg:text-3xl ">
+      <section className="w-full dark:bg-dark-bg  h-screen pt-7 px-3 flex justify-center ">
+        <div className="w-full h-[80%] dark:bg-neutral-900 md:w-[500px] rounded-xl pb-10 mt-9 flex justify-center pt-9 items-center flex-col">
+          <div className="flex flex-col justify-center  items-center text-center p-4 mb-4">
+            <h1 className="mb-2 font-extrabold text-2xl lg:text-3xl dark:text-dark-text ">
               Welcome to Thrive,
             </h1>
-            <h1 className="mb-2 font-extrabold text-2xl lg:text-3xl ">
+            <h1 className="mb-2 font-extrabold text-2xl lg:text-3xl dark:text-dark-text">
               Sign Up to get Started.
             </h1>
-            <h4 className="text-gray-400 text-sm">
+            <h4 className="text-gray-400 text-sm dark:text-neutral-300">
               Enter your details to proceed further
             </h4>
           </div>
@@ -105,12 +105,12 @@ const SignUp: React.FC = () => {
                         placeholder="First name"
                         id="firstname"
                         name="firstname"
-                        className="bg-slate-100 p-2 rounded-lg w-full border border-gray-200 focus:border-blue-200 focus:outline-none  focus:ring-blue-500"
+                        className="bg-slate-100 p-2 rounded-lg w-full dark:bg-neutral-800 dark:border-neutral-600 dark:text-white border border-gray-200 focus:border-blue-200 focus:outline-none  focus:ring-blue-500"
                       />
                       <ErrorMessage
                         name="firstname"
                         component="div"
-                        className="text-red-500 text-sm text-left mt-1"
+                        className="text-red-500 dark:text-red-400 text-sm text-left mt-1"
                       />
                     </div>
 
@@ -120,12 +120,12 @@ const SignUp: React.FC = () => {
                         placeholder="Last name"
                         id="lastname"
                         name="lastname"
-                        className="bg-slate-100 p-2 rounded-lg w-full border border-gray-200 focus:border-blue-200 focus:outline-none  focus:ring-blue-500"
+                        className="bg-slate-100 p-2 rounded-lg w-full dark:bg-neutral-800 dark:border-neutral-600 dark:text-white border border-gray-200 focus:border-blue-200 focus:outline-none  focus:ring-blue-500"
                       />
                       <ErrorMessage
                         name="lastname"
                         component="div"
-                        className="text-red-500 text-sm text-left mt-1"
+                        className="text-red-500 dark:text-red-400 text-sm text-left mt-1"
                       />
                     </div>
                   </div>
@@ -136,12 +136,12 @@ const SignUp: React.FC = () => {
                       placeholder="Email"
                       id="email"
                       name="email"
-                      className="bg-slate-100 p-2 rounded-lg w-full border border-gray-200 focus:border-blue-200 focus:outline-none  focus:ring-blue-500"
+                      className="bg-slate-100 p-2 rounded-lg w-full dark:bg-neutral-800 dark:border-neutral-600 dark:text-white border border-gray-200 focus:border-blue-200 focus:outline-none  focus:ring-blue-500"
                     />
                     <ErrorMessage
                       name="email"
                       component="div"
-                      className="text-red-500 text-sm text-left mt-1"
+                      className="text-red-500 dark:text-red-400 text-sm text-left mt-1"
                     />
                   </div>
 
@@ -151,12 +151,12 @@ const SignUp: React.FC = () => {
                       placeholder="Create Password"
                       id="password"
                       name="password"
-                      className="bg-slate-100 p-2 rounded-lg border  w-full border-gray-200 focus:border-blue-200 focus:outline-none  focus:ring-blue-500"
+                      className="bg-slate-100 p-2 rounded-lg border dark:bg-neutral-800 dark:border-neutral-600 dark:text-white w-full border-gray-200 focus:border-blue-200 focus:outline-none  focus:ring-blue-500"
                     />
                     <ErrorMessage
                       name="password"
                       component="div"
-                      className="text-red-500 text-sm text-left mt-1"
+                      className="text-red-500 dark:text-red-400 text-sm text-left mt-1"
                     />
                   </div>
 
@@ -166,12 +166,12 @@ const SignUp: React.FC = () => {
                       placeholder="Confirm Password"
                       id="confirmPassword"
                       name="confirmPassword"
-                      className="bg-slate-100 p-2 rounded-lg border  w-full border-gray-200 focus:border-blue-200 focus:outline-none  focus:ring-blue-500"
+                      className="bg-slate-100 dark:bg-neutral-800 dark:border-neutral-600 p-2 rounded-lg border dark:text-white  w-full border-gray-200    focus:outline-none  focus:ring-blue-500"
                     />
                     <ErrorMessage
                       name="confirmPassword"
                       component="div"
-                      className="text-red-500 text-sm text-left mt-1"
+                      className="text-red-500 dark:text-red-400 text-sm text-left mt-1"
                     />
                   </div>
 
@@ -187,7 +187,7 @@ const SignUp: React.FC = () => {
 
                   <p className="mb-[-10px]">or</p>
 
-                  <div className="flex justify-center w-full">
+                  <div className="flex justify-center w-full ">
                     <GoogleLogin
                       onSuccess={(credentialResponse) => {
                         loginWithGoogle(credentialResponse);
@@ -207,7 +207,7 @@ const SignUp: React.FC = () => {
             <p className="mt-5 text-sm font-semibold text-gray-500">
               Already have an account ?
               <Link to="/login">
-                <span className="text-thirve-blue">Log in</span>
+                <span className="text-thirve-blue ml-2 dark:text-blue-400">Log in</span>
               </Link>
             </p>
           </div>

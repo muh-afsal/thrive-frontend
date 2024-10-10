@@ -3,28 +3,27 @@ import { IoMdContact, IoMdLock, IoMdCard, IoMdNotifications } from 'react-icons/
 import NavSidebar from '@/components/sidebars/NavSidebar';
 import CategoryNavbar from '@/components/navbars/CategoryNavbar';
 import Sidebar from '@/components/sidebars/CategorySidebar';
-import GeneralInfo from '@/components/profile/Generalnfo';
-import Security from '@/components/profile/Security';
-import Billing from '@/components/profile/Billing';
-import Notification from '@/components/profile/Notification';
+import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 
 const Profile: React.FC = () => {
-  const [activeComponent, setActiveComponent] = useState<React.ReactNode>(<GeneralInfo />);
-  const [activeItem, setActiveItem] = useState<string>('General Info');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isSmallScreen, setIsSmallScreen] = useState(false);
+  const navigate = useNavigate();
+  const location = useLocation();
+
 
   const sidebarItems = [
-    { name: 'General Info', def: "Profile pic and details", icon: <IoMdContact size={25} />, component: <GeneralInfo /> },
-    { name: 'Security', def: "Password & security", icon: <IoMdLock size={25} />, component: <Security /> },
-    { name: 'Billing', def: "Billing & payment details", icon: <IoMdCard size={25} />, component: <Billing /> },
-    { name: 'Notification', def: "Notification settings", icon: <IoMdNotifications size={25} />, component: <Notification /> },
+    { name: 'General Info', def: "Profile pic and details", icon: <IoMdContact size={25} />, pathTo: '/profile/general-info' },
+    { name: 'Security', def: "Password & security", icon: <IoMdLock size={25} />, pathTo: '/profile/security' },
+    { name: 'Billing', def: "Billing & payment details", icon: <IoMdCard size={25} />, pathTo: '/profile/billing' },
+    { name: 'Notification', def: "Notification settings", icon: <IoMdNotifications size={25} />, pathTo: '/profile/notification'  },
   ];
 
-  const handleItemClick = (component: React.ReactNode, name: string) => {
-    setActiveComponent(component);
-    setActiveItem(name);
-  };
+  useEffect(() => {
+    if (location.pathname === '/profile') {
+      navigate('/profile/general-info');
+    }
+  }, [location.pathname, navigate]);
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
@@ -42,18 +41,22 @@ const Profile: React.FC = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
+  const handleItemClick = (path: string) => {
+    navigate(path); 
+  };
+
   return (
-    <div className='w-full h-screen overflow-hidden'>
+    <div className='w-full h-screen overflow-hidden dark:bg-dark-bg dark:text-white dark:border-neutral-700'>
       <div className='h-full flex bg--100 relative'>
-        <div className={`bg--400 h-full border-r border-slate-200 transition-all duration-300 ease-in-out 
+        <div className={`bg--400 h-full border-r border-slate-200 dark:border-neutral-700 transition-all duration-300 ease-in-out 
                          ${isSmallScreen ? (isSidebarOpen ? 'w-16' : 'w-0') : 'w-16'} 
                          overflow-hidden z-50`}>
           <NavSidebar />
         </div>
         <div className='flex-1 h-screen overflow-hidden flex flex-col'>
-          <CategoryNavbar toggleSidebar={toggleSidebar} />
+          <CategoryNavbar toggleSidebar={toggleSidebar} categoryName='Profile Settings'/>
           <div className='flex-1 flex overflow-hidden relative'>
-            <div className={`bg-white absolute top-0 left-0 h-full transition-all duration-300 ease-in-out 
+            <div className={` absolute top-0 left-0 h-full transition-all duration-300 ease-in-out 
                              ${isSmallScreen ? (isSidebarOpen ? 'w-[300px]' : 'w-0') : 'w-[300px]'} 
                              overflow-hidden z-40`}>
               <Sidebar
@@ -61,14 +64,14 @@ const Profile: React.FC = () => {
                   name: item.name,
                   def: item.def,
                   icon: item.icon,
-                  onClick: () => handleItemClick(item.component, item.name),
+                  onClick: () => handleItemClick(item.pathTo),
                 }))}
-                activeItem={activeItem}
+                // activeItem={activeItem} 
               />
             </div>
-            <div className={`flex-1 p-4 bg--400 transition-all duration-300 ease-in-out overflow-auto
+            <div className={`flex-1 p-4  dark:bg-dark-bg transition-all duration-300 ease-in-out overflow-auto
                              ${isSmallScreen ? 'w-full' : 'ml-72'}`}>
-              {activeComponent}
+              <Outlet/>
             </div>
           </div>
         </div>

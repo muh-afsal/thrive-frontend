@@ -9,7 +9,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '@/redux/store';
 import { fetchUser } from '@/redux/actions/user/fetchUserActions';
 
-const Generalnfo: React.FC = () => {
+const Security: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState<boolean>(false);
@@ -147,4 +147,4 @@ const Generalnfo: React.FC = () => {
   );
 }
 
-export default Generalnfo;
+export default Security;

@@ -1,10 +1,10 @@
 import React from 'react'
 
-const Generalnfo:React.FC = () => {
+const Billing:React.FC = () => {
   return (
     <div>
 billing    </div>
   )
 }
 
-export default Generalnfo
+export default Billing

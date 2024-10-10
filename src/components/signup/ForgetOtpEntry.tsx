@@ -24,7 +24,8 @@ const ForgetOtpEntry: React.FC<ForgetOtpEntryProps> = ({ email, onOtpVerified })
   const [errors, setErrors] = useState<string | null>(null);
   const [remainingTime, setRemainingTime] = useState<number>(120);
   const [resendMessage, setResendMessage] = useState<string | null>(null);
-  const { isLoading } = useSelector((state: RootState) => state.auth);
+  const [resendSuccessMessage, setReasendSuccessMessage] = useState<string | null>(null);
+  const { isLoading } = useSelector((state: RootState) => state.user);
   const inputsRef = useRef<(HTMLInputElement | null)[]>([]);
   const navigate = useNavigate();
 
@@ -115,7 +116,7 @@ const ForgetOtpEntry: React.FC<ForgetOtpEntryProps> = ({ email, onOtpVerified })
         const newExpirationTime = Math.floor(Date.now() / 1000) + 120;
         localStorage.setItem("otpExpiration", newExpirationTime.toString());
         setRemainingTime(120);
-        setResendMessage("A new OTP has been sent to your email.");
+        setReasendSuccessMessage("A new OTP has been sent to your email.");
       } else {
         setResendMessage("Failed to resend OTP. Please try again.");
       }
@@ -141,6 +142,7 @@ const ForgetOtpEntry: React.FC<ForgetOtpEntryProps> = ({ email, onOtpVerified })
           <div className="flex flex-col justify-center items-center text-center p-4 mb-4 ">
             <h1 className="mb-2 font-extrabold text-2xl lg:text-3xl">Enter the OTP</h1>
             <h4 className="text-gray-400 text-sm">Please check your email for the OTP</h4>
+            {resendSuccessMessage && <p className="text-green-600 text-sm mt-7">{resendSuccessMessage}</p>}
           </div>
           <div className="flex items-center justify-center">
             <img className="w-[60%]" src={otpimage1} alt="OTP Entry" />
