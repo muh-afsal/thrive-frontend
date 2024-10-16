@@ -14,7 +14,7 @@ import { Formik, Field, Form, ErrorMessage, FormikHelpers } from "formik";
 import { selectUserState } from "../../redux/reducers/user/userSlice";
 import ForgetOtpEntry from "@/components/signup/ForgetOtpEntry";
 import forgetPasswordImage from '@/assets/images/signup/forgetpasswordimage.png';
-import Modal from "@/components/modals/ConfirmationModal";
+import Modal from "@/components/modals/CommonModal";
 import { CLIENT_API } from "@/axios";
 import { config } from "@/common/configuratoins";
 

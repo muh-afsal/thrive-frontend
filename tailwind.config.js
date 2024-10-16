@@ -1,6 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 export default {
-  darkMode: 'class', // Enable dark mode using the class strategy
+  darkMode: 'class',
   content: [
     "./src/**/*.{js,jsx,ts,tsx}",
   ],
@@ -8,24 +8,23 @@ export default {
     extend: {
       colors: {
         "thirve-blue": "#4787FA",
-        "dark-bg": "#171717 ", 
-        "dark-text": "#FFFFFF", 
+        "dark-bg": "#171717",
+        "dark-text": "#FFFFFF",
         "dark-links": "#6495ED",
-        "dark-scroll-thumb": "#4A5568", 
-        "dark-scroll-track": "#2D3748", 
-
+        "dark-scroll-thumb": "#4A5568",
+        "dark-scroll-track": "#2D3748",
       },
       scrollbar: {
         DEFAULT: {
-          thumb: '#E5E4E2', 
-          track: '#f1f1f1',
+          thumb: 'rgba(147, 147, 147, 0.3)', // Even more transparent
+          track: 'transparent',
         },
         hover: {
-          thumb: '#a8a8a8', 
+          thumb: 'rgba(168, 168, 168, 0.5)', // More visible on hover
         },
         dark: {
-          thumb: '#4A5568', // Dark mode thumb
-          track: '#2D3748', // Dark mode track
+          thumb: 'rgba(74, 85, 104, 0.3)', // More transparent dark mode thumb
+          track: 'transparent',
         }
       }
     },
@@ -36,16 +35,17 @@ export default {
         '.scrollbar-custom': {
           /* Webkit browsers (Chrome, Safari) */
           '&::-webkit-scrollbar': {
-            width: '2px', 
+            width: '1px', // Extremely thin
+            height: '1px', // For horizontal scrollbars
           },
           '&::-webkit-scrollbar-thumb': {
             backgroundColor: theme('scrollbar.DEFAULT.thumb'),
-            borderRadius: '10px',
+            borderRadius: '9999px', // Fully rounded
           },
           '&::-webkit-scrollbar-track': {
             backgroundColor: theme('scrollbar.DEFAULT.track'),
           },
-          '&::-webkit-scrollbar-thumb:hover': {
+          '&:hover::-webkit-scrollbar-thumb': {
             backgroundColor: theme('scrollbar.hover.thumb'),
           },
 
@@ -58,9 +58,14 @@ export default {
           },
 
           /* For Firefox */
-          'scrollbar-width': 'thin',
+          'scrollbar-width': 'none', // Hide scrollbar in Firefox
+          '&:hover': {
+            'scrollbar-width': 'thin', // Show thin scrollbar on hover in Firefox
+          },
           'scrollbar-color': `${theme('scrollbar.DEFAULT.thumb')} ${theme('scrollbar.DEFAULT.track')}`,
-          '.dark scrollbar-color': `${theme('scrollbar.dark.thumb')} ${theme('scrollbar.dark.track')}`,
+          '.dark & ': {
+            'scrollbar-color': `${theme('scrollbar.dark.thumb')} ${theme('scrollbar.dark.track')}`,
+          },
         },
       };
 

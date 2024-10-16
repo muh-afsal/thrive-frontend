@@ -4,11 +4,15 @@ import { useState, useEffect } from "react";
 import ContactSearchBar from "@/components/searchBars/ContactSearchbar";
 import { IoCall } from "react-icons/io5";
 import { useSocket } from "@/contexts/SocketContext";
+import { RootState } from "@/redux/store";
+import { useSelector } from "react-redux";
 
 
 const CallLayout: React.FC = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isSmallScreen, setIsSmallScreen] = useState(false);
+  const { data} = useSelector((state: RootState) => state.user);
+  const currentUserId=data?._id;
   const { socket } = useSocket();
 
   const toggleSidebar = () => {
@@ -29,7 +33,7 @@ const CallLayout: React.FC = () => {
 
    const handleStartInstantCall=()=>{
      if(socket){
-         socket.emit('create-room')
+         socket.emit('create-room',{currentUserId})
      }
      
    }

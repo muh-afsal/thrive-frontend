@@ -18,7 +18,7 @@ type IPeerActions=
 
 
 export const peersReducer=(state:IPeerState,action:IPeerActions)=>{
-    console.log(action,'jjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj');
+    console.log(action,'jjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj');
     
     switch (action.type) {
         case ADD_PEER:

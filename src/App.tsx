@@ -24,8 +24,8 @@ import Security from "./components/profile/Security";
 import Billing from "./components/profile/Billing";
 import Notification from "./components/profile/Notification";
 import ChatPage from "./pages/user/chat/ChatPage";
-import CallLayout from "./pages/user/audioCall/CallLayout";
-import CallRoomPage from "./pages/user/audioCall/CallRoomPage";
+import CallLayout from "./pages/user/Call/CallLayout";
+import CallRoomPage from "./pages/user/Call/CallRoomPage";
 import { SocketProvider } from "./contexts/SocketContext";
 
 const App = () => {

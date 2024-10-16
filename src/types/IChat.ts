@@ -24,6 +24,7 @@ export type Participant = {
   export interface IMessage {
     _id: string;
     content: string;
+    attachments: any[];
     sender: {
       [x: string]: string | undefined;
       firstname: string;

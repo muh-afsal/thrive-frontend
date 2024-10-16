@@ -15,7 +15,7 @@ import { useNavigate } from "react-router-dom";
 import { Formik, Field, Form, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { config } from "@/common/configuratoins";
-import Modal from "../modals/ConfirmationModal";
+import Modal from "../modals/CommonModal";
 import ChangeEmailImage from "@/assets/images/profile/changeemailImage.png";
 import ChangeEmailOtpEntry from "./ChangeEmailOtpEntry";
 

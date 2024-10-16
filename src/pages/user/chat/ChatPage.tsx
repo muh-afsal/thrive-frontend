@@ -3,8 +3,6 @@ import ContactSearchBar from "@/components/searchBars/ContactSearchbar";
 import UserContact from "@/components/chat/UserContact";
 import { useSelector } from "react-redux";
 import { IoMdMore } from "react-icons/io";
-import { RootState } from "@/redux/store";
-import { useParams } from "react-router-dom";
 import { GrAttachment } from "react-icons/gr";
 import { GrMicrophone } from "react-icons/gr";
 import Picker, { EmojiClickData } from "emoji-picker-react";
@@ -18,7 +16,6 @@ import { FiEdit } from "react-icons/fi";
 import AddNewChatModal from "@/components/chat/AddnewChatModal";
 import { HiTrash } from "react-icons/hi2";
 import { IoMdClose } from "react-icons/io";
-import audiofile from "../../../assets/audio/recorded_audio_uvkseh.ogg";
 
 import {
   uploadAudioFile,
@@ -27,10 +24,12 @@ import {
   uploadMultipleVideos,
 } from "@/utils/cloudinary/cloudinaryService";
 import { config } from "@/common/configuratoins";
-import { Chat, IChatMessage, IMessage } from "@/types/IChat";
-import mongoose from "mongoose";
+import { Chat, IMessage } from "@/types/IChat";
 import { ChatMessageBubble } from "./ChatMessagBubble";
 import { useSocket } from "@/contexts/SocketContext";
+import { ClipLoader } from "react-spinners";
+import { RootState } from "@/redux/store";
+import { useParams } from "react-router-dom";
 
 type MessageFile = {
   url: string;
@@ -40,7 +39,10 @@ type MessageFile = {
 const ChatPage: React.FC = () => {
   const { chatType } = useParams<{ chatType: string }>();
   const { data } = useSelector((state: RootState) => state.user);
-  const [uploadedFileUrls, setUploadedFileUrls] = useState<string[]>([]);
+  const [uploadedFileUrls, setUploadedFileUrls] = useState<
+    { url: string; type: string }[]
+  >([]);
+
   const [inputValue, setInputValue] = useState("");
   const [showPicker, setShowPicker] = useState<boolean>(false);
   const pickerRef = useRef<HTMLDivElement>(null);
@@ -63,19 +65,24 @@ const ChatPage: React.FC = () => {
   const [chatData, setChatData] = useState([]);
   // const participantsArray = chatData.map(chat => chat.participants);
   // console.log(chatData,'mmmmmmmmmmmmmmmmmmmmmmmmmmmm');
-  
+
   const [newChatAdded, setNewChatAdded] = useState(false);
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [isGroupChat, setIsGroupChat] = useState(false);
   const [selectedChatId, setSelectedChatId] = useState<string | null>(null);
   const [selectedChatName, setSelectedChatName] = useState<string | null>(null);
-  const [selectedChatprofileImage, setSelectedChatProfileImage] = useState<string | null>(null);
+  const [selectedChatprofileImage, setSelectedChatProfileImage] = useState<
+    string | null
+  >(null);
   const [chatMessages, setChatMessages] = useState<IMessage[]>([]);
   const [typing, setTyping] = useState(false);
   const { socket } = useSocket();
+  const bottomRef = useRef<HTMLDivElement | null>(null);
 
-  console.log(chatMessages,'%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%');
-  
+  // console.log(
+  //   chatMessages,
+  //   "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%"
+  // );
 
   const currentUser = data;
   const currentUserId = currentUser?._id;
@@ -84,7 +91,10 @@ const ChatPage: React.FC = () => {
     const timeoutId = setTimeout(() => {
       if (typing) {
         if (socket) {
-          socket.emit('stopTyping', { roomId: selectedChatId, sender: currentUserId });
+          socket.emit("stopTyping", {
+            roomId: selectedChatId,
+            sender: currentUserId,
+          });
           setTyping(false);
         }
       }
@@ -93,37 +103,40 @@ const ChatPage: React.FC = () => {
     return () => clearTimeout(timeoutId);
   }, [chatMessages, typing, selectedChatId, socket, currentUserId]);
 
-  
 
-
+  useEffect(() => {
+    if (bottomRef.current) {
+      bottomRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [chatMessages]);
 
   useEffect(() => {
     if (socket) {
       const handleReceiveMessage = (message: IMessage) => {
-        console.log(message,'00000000000000000000');
+        console.log(message, "00000000000000000000");
         setChatMessages((prevMessages) => [...prevMessages, message]);
       };
-      socket.on('receiveMessage', handleReceiveMessage);
+      socket.on("receiveMessage", handleReceiveMessage);
 
       return () => {
-        socket.off('receiveMessage', handleReceiveMessage);
-        socket.disconnect(); 
+        socket.off("receiveMessage", handleReceiveMessage);
+        socket.disconnect();
       };
     }
   }, [socket]);
-
-
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(e.target.value);
     if (!typing) {
       setTyping(true);
-    
+
       if (socket && selectedChatId) {
-        socket.emit('typing', { roomId: selectedChatId, sender: currentUserId });
+        socket.emit("typing", {
+          roomId: selectedChatId,
+          sender: currentUserId,
+        });
       }
     }
-    
   };
 
   const handleAttachmentClick = (event: React.MouseEvent<HTMLDivElement>) => {
@@ -168,16 +181,16 @@ const ChatPage: React.FC = () => {
     const fetchAllChatMessages = async () => {
       try {
         setIsfetchChatMessageLoading(true);
-          if(isChatOpen){
-        const response = await CLIENT_API.get(
-          `/media/get-all-messages?chatId=${selectedChatId}`,
-          config
-        );
-        const allChatMessages = response.data.chatMessages;
+        if (isChatOpen) {
+          const response = await CLIENT_API.get(
+            `/media/get-all-messages?chatId=${selectedChatId}`,
+            config
+          );
+          const allChatMessages = response.data.chatMessages;
 
-        setChatMessages(allChatMessages);
-        // console.log(allChatMessages);
-      }
+          setChatMessages(allChatMessages);
+          // console.log(allChatMessages);
+        }
       } catch (error) {
         console.error("Error fetching messages", error);
         setChatMessages([]);
@@ -198,17 +211,18 @@ const ChatPage: React.FC = () => {
       setShowRecordingPopup(false);
       const currentUserId = currentUser?._id;
       const chatId = selectedChatId;
-      
-      
+
+      const attachments = messageFiles.map((file) => ({
+        url: file.url,
+        type: file.type,
+      }));
+
       const chatPayload = {
         content: inputValue || "",
         sender: currentUserId,
-        attachments: null,
+        attachments: attachments,
         chat: chatId,
       };
-      
-
-     
 
       try {
         const response = await CLIENT_API.post(
@@ -227,44 +241,29 @@ const ChatPage: React.FC = () => {
             profileImage: currentUser?.profileImage || "",
           };
 
-
-          const ChatsocketPayload={
-            _id:response.data.chatMessage._id,
-            attachments:[],
-            chat:chatId,
-            content:inputValue || "",
+          const ChatsocketPayload = {
+            _id: response.data.chatMessage._id,
+            attachments: attachments,
+            chat: chatId,
+            content: inputValue || "",
             createdAt: new Date().toLocaleTimeString(),
-            sender:sender
-          }
+            sender: sender,
+          };
           if (socket) {
-            socket.emit('newMessage', { obj: ChatsocketPayload });
+            socket.emit("newMessage", { obj: ChatsocketPayload });
           } else {
-            console.error('Socket not connected yet, cannot emit message.');
+            console.error("Socket not connected yet, cannot emit message.");
           }
-
-
-
-          // const newMessage: IChatMessage = {
-          //   _id: response.data.chatMessage._id,
-          //   content: inputValue,
-          //   sender: sender,
-          //   attachments: [],
-          //   chat: chatId,
-          // };
-
-          // console.log(newMessage);
-
-          // setChatMessages((prevMessages) => [...prevMessages, newMessage]);
 
           setInputValue("");
           setMessageFiles([]);
           setAudioBlob(null);
+          setShowPicker(false);
+          setUploadedFileUrls([]);
         }
       } catch (error) {
         console.log(error);
       }
-
-      // console.log(inputValue, "--this is chat content");
     }
   };
 
@@ -291,15 +290,25 @@ const ChatPage: React.FC = () => {
   });
 
   const handleRemoveFilePreview = (index: number) => {
-    setUploadedFileUrls((prev) => prev.filter((_, i) => i !== index));
+    if(uploadedFileUrls){
+      setUploadedFileUrls((prev) => prev.filter((_, i) => i !== index));
+    }else{
+      setUploadedFileUrls([]);
+      setMessageFiles([]);
+    }
   };
 
   const handlePhotoUpload = async (e: Event) => {
     const target = e.target as HTMLInputElement;
     if (target.files) {
       setFileUploadLoading(true);
+      setMenuOpen(false);
+
       const files = Array.from(target.files);
-      const previewUrls = files.map((file) => URL.createObjectURL(file));
+      const previewUrls = files.map((file) => ({
+        url: URL.createObjectURL(file),
+        type: "image", 
+      }));
       setUploadedFileUrls((prev) => [...prev, ...previewUrls]);
 
       try {
@@ -322,7 +331,10 @@ const ChatPage: React.FC = () => {
     if (target.files) {
       setFileUploadLoading(true);
       const files = Array.from(target.files);
-      const previewUrls = files.map((file) => URL.createObjectURL(file));
+      const previewUrls = files.map((file) => ({
+        url: URL.createObjectURL(file),
+        type: "video", 
+      }));
       setUploadedFileUrls((prev) => [...prev, ...previewUrls]);
 
       try {
@@ -345,6 +357,11 @@ const ChatPage: React.FC = () => {
     if (target.files) {
       setFileUploadLoading(true);
       const files = Array.from(target.files);
+      const previewUrls = files.map((file) => ({
+        url: URL.createObjectURL(file),
+        type: "document", // Get the file type (e.g., application/pdf, etc.)
+      }));
+      setUploadedFileUrls((prev) => [...prev, ...previewUrls]);
 
       try {
         const uploadedUrls = await uploadMultipleDocuments(files);
@@ -372,6 +389,7 @@ const ChatPage: React.FC = () => {
         setIsRecording(true);
         setShowRecordingPopup(true);
         setRecordingDuration(0);
+        setFileUploadLoading(true);
 
         const audioChunks: Blob[] = [];
         mediaRecorderRef.current.start();
@@ -406,6 +424,8 @@ const ChatPage: React.FC = () => {
             ]);
           } catch (error) {
             console.error("Error uploading audio:", error);
+          } finally {
+            setFileUploadLoading(false);
           }
         });
       } else {
@@ -422,35 +442,33 @@ const ChatPage: React.FC = () => {
     }
   };
 
-  
-const handleChatOpen = (chatId: string, chat: Chat) => {
-  setIsChatOpen(true);
-  setSelectedChatId(chatId);
+  const handleChatOpen = (chatId: string, chat: Chat) => {
+    setIsChatOpen(true);
+    setSelectedChatId(chatId);
 
-  if (socket && chatId) {
-    socket.emit('joinRoom', chatId);
-  }
+    if (socket && chatId) {
+      socket.emit("joinRoom", chatId);
+    }
 
-  const chatName = chat.isGroupChat
-    ? chat.name
-    : chat.participants
-        .filter((participant) => participant._id !== currentUserId)
-        .map(
-          (participant) => `${participant.firstname} ${participant.lastname}`
-        )
-        .join(", ");
+    const chatName = chat.isGroupChat
+      ? chat.name
+      : chat.participants
+          .filter((participant) => participant._id !== currentUserId)
+          .map(
+            (participant) => `${participant.firstname} ${participant.lastname}`
+          )
+          .join(", ");
 
-  setSelectedChatName(chatName);
+    setSelectedChatName(chatName);
 
-  const profileImage = chat.isGroupChat
-    ? chat.groupIcon
-    : chat.participants.filter(
-        (participant) => participant._id !== currentUserId
-      )[0]?.profileImage;
+    const profileImage = chat.isGroupChat
+      ? chat.groupIcon
+      : chat.participants.filter(
+          (participant) => participant._id !== currentUserId
+        )[0]?.profileImage;
 
-  setSelectedChatProfileImage(profileImage);
-};
-
+    setSelectedChatProfileImage(profileImage);
+  };
 
   const handleDeleteAudio = () => {
     if (isRecording && mediaRecorderRef.current) {
@@ -561,7 +579,7 @@ const handleChatOpen = (chatId: string, chat: Chat) => {
               className="cursor-pointer hover:text-thrive-blue dark:text-neutral-500"
               size={20}
             />
-            <span className="tooltip opacity-0 group-hover:opacity-100 transition-opacity duration-200 absolute bg-gray-500 text-white text-xs rounded py-1 px-2 bottom-full ">
+            <span className="tooltip opacity-0 group-hover:opacity-100 transition-opacity duration-200 absolute bg-gray-500 text-white text-xs rounded py- 1 px-2 bottom-full ">
               Add chat
             </span>
           </div>
@@ -594,45 +612,75 @@ const handleChatOpen = (chatId: string, chat: Chat) => {
 </audio> */}
 
             <div className="flex bg--400 flex-col-reverse space-y-3 pb-7 space-y-reverse p-4 overflow-y-auto h-full scrollbar-custom">
-              {chatMessages && chatMessages
-                .slice()
-                .reverse()
-                .map((message) => {
-                  console.log(message,'jjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj');
-                  
-                  const isSender = message.sender._id === currentUserId;
-                  return (
-                    <ChatMessageBubble
-                      key={message._id}
-                      isSender={isSender}
-                      message={message}
-                      // isgroup={chatData.i}
-                    />
-                  );
-                })}
+            <div ref={bottomRef} />
+              {chatMessages &&
+                chatMessages
+                  .slice()
+                  .reverse()
+                  .map((message) => {
+                    const isSender = message.sender._id === currentUserId;
+                    return (
+                      <ChatMessageBubble
+                        key={message._id}
+                        isSender={isSender}
+                        message={message}
+                        // isgroup={chatData.i}
+                      />
+                    );
+                  })}
+                 
             </div>
           </div>
           {/* Preview Section */}
-          <div className="w-full flex overflow-x-auto scrollbar-custom mt-[-150px] p-2 relative z-50">
-            {uploadedFileUrls.map((url, index) => (
-              <div key={index} className="relative ">
-                <img
-                  src={url}
-                  alt="Preview"
-                  className="w-20 h-20 object-cover rounded-md mr-2 "
-                />
-                <button
-                  className="absolute top-1 right-1 bg-red-600 text-white rounded-full w-5 h-5 flex justify-center items-center"
-                  onClick={() => handleRemoveFilePreview(index)}
+          <div
+            className="flex  overflow-x-auto rounded-xl overflow-y-hidden  border-neutral-300 dark:border-neutral-600 shadow-xl bg-neutral-200 pr-20 dark:bg-neutral-700 scrollbar-custom mt-[-110px] relative z-50"
+            style={{ width: "fit-content", minWidth: "100%" }}
+          >
+            <div className="flex flex-nowrap">
+              {uploadedFileUrls.map((file, index) => (
+                <div
+                  key={index}
+                  className="relative bg--400 border-r ml-2 dark:border-neutral-600 border-neutral-300 flex justify-center items-center flex-shrink-0"
                 >
-                  <IoMdClose />
-                </button>
-              </div>
-            ))}
+                  {file.type.startsWith("image") ? (
+                    <img
+                      src={file.url}
+                      alt="Preview"
+                      className="w-24 h-24 object-cover rounded-md mr-2"
+                    />
+                  ) : file.type.startsWith("video") ? (
+                    <video
+                      src={file.url}
+                      className="w-24 h-24 object-cover rounded-md mr-2"
+                    />
+                  ) : file.type === "document" ? (
+                    <embed
+                      src={file.url}
+                      type={file.type}
+                      width="100%"
+                      height="100%"
+                      className="w-24 h-24 object-cover rounded-md mr-2"
+                    />
+                  ) : (
+                    <div className="w-24 h-24 flex justify-center items-center rounded-md mr-2">
+                      <span className="text-lg">
+                        {file.type.split("/")[1].toUpperCase()}
+                      </span>
+                    </div>
+                  )}
+                  <button
+                    className="absolute top-1 right-1 bg-red-600 text-white rounded-full w-5 h-5 flex justify-center items-center"
+                    onClick={() => handleRemoveFilePreview(index)}
+                  >
+                    <IoMdClose />
+                  </button>
+                </div>
+              ))}
+            </div>
           </div>
           <form
             onSubmit={handleSendMessage}
-            className="chat-input dark:bg-dark-bg h-[7%] w-[100%] bottom-0 absolute flex border-t border-gray-200 dark:border-neutral-700"
+            className="chat-input bg-white dark:bg-dark-bg h-[7%] w-[100%] bottom-0 absolute flex border-t border-gray-200 dark:border-neutral-700"
           >
             {/* Attachments and Inputs */}
             <div className="bg--400 h-full w-[7%] flex justify-center items-center">
@@ -664,6 +712,7 @@ const handleChatOpen = (chatId: string, chat: Chat) => {
                     fileInput.type = "file";
                     fileInput.accept = "image/*";
                     fileInput.onchange = handlePhotoUpload;
+                    fileInput.multiple = true;
                     fileInput.click();
                   }}
                   style={{ display: "flex", alignItems: "center" }}
@@ -722,49 +771,63 @@ const handleChatOpen = (chatId: string, chat: Chat) => {
                   <Picker onEmojiClick={onEmojiClick} />
                 </div>
               )}
-              {inputValue.trim() || messageFiles.length > 0 || audioBlob ? (
-                <button
-                  type="submit"
-                  className="w-9 h-9 dark:text-white hover:bg-slate-100 dark:hover:bg-neutral-700 hover:cursor-pointer rounded-md flex justify-center items-center"
-                >
-                  {fileUploadLoading ? (
-                    <TbSend2 className="animate-spin" size={23} />
-                  ) : (
-                    <TbSend2 size={23} />
-                  )}
-                </button>
-              ) : (
-                <div
-                  className="w-9 h-9 dark:hover:bg-neutral-700 dark:text-white hover:bg-slate-100 hover:cursor-pointer rounded-md flex justify-center items-center"
-                  onClick={handleAudioRecord}
-                >
-                  {isRecording ? (
-                    <GrMicrophone size={19} className="text-red-500" />
-                  ) : (
-                    <GrMicrophone size={19} />
-                  )}
+              <div className="flex items-center">
+                {inputValue.trim() || messageFiles.length > 0 || audioBlob ? (
+                  <div>
+                    {fileUploadLoading ? (
+                      <button
+                        disabled={fileUploadLoading}
+                        className="w-9 h-9 dark:text-white hover:bg-slate-100 dark:hover:bg-neutral-700 hover:cursor-pointer rounded-md"
+                      >
+                        <ClipLoader
+                          size={20}
+                          speedMultiplier={0.8}
+                          color="dark:text-neutral-300 text-neutral-600"
+                        />
+                      </button>
+                    ) : (
+                      <button
+                        type="submit"
+                        disabled={fileUploadLoading}
+                        className="w-9 h-9 dark:text-white hover:bg-slate-100 dark:hover:bg-neutral-700 hover:cursor-pointer rounded-md"
+                      >
+                        <TbSend2 size={23} />
+                      </button>
+                    )}
+                  </div>
+                ) : (
+                  <div
+                    className="w-9 h-9 dark:hover:bg-neutral-700 dark:text-white hover:bg-slate-100 hover:cursor-pointer rounded-md flex justify-center items-center"
+                    onClick={handleAudioRecord}
+                  >
+                    {isRecording ? (
+                      <GrMicrophone size={19} className="text-red-500" />
+                    ) : (
+                      <GrMicrophone size={19} />
+                    )}
+                  </div>
+                )}
+              </div>
+              {showRecordingPopup && (
+                <div className="absolute bottom-[7px] right-28 transform dark:bg-neutral-700 dark:text-white bg-neutral-200 shadow-[0px_2px_3px_-1px_rgba(0,0,0,0.1),0px_1px_0px_0px_rgba(25,28,33,0.02),0px_0px_0px_1px_rgba(25,28,33,0.08)] dark:shadow-neutral-600 dark:border-neutral-600 rounded-xl p-2 flex items-center">
+                  <div
+                    className="mr-2 cursor-pointer"
+                    onClick={handleDeleteAudio}
+                  >
+                    <HiTrash />
+                  </div>
+                  <div className="mr-3 text-red-400">
+                    Recording.... {recordingDuration}s
+                  </div>
                 </div>
               )}
             </div>
-            {showRecordingPopup && (
-              <div className="absolute bottom-[7px] right-28 transform dark:bg-neutral-700 dark:text-white bg-neutral-200 shadow-[0px_2px_3px_-1px_rgba(0,0,0,0.1),0px_1px_0px_0px_rgba(25,28,33,0.02),0px_0px_0px_1px_rgba(25,28,33,0.08)] dark:shadow-neutral-600 dark:border-neutral-600 rounded-xl p-2 flex items-center">
-                <div
-                  className="mr-2 cursor-pointer"
-                  onClick={handleDeleteAudio}
-                >
-                  <HiTrash />
-                </div>
-                <div className="mr-3 text-red-400">
-                  Recording.... {recordingDuration}s
-                </div>
-              </div>
-            )}
           </form>
         </div>
       ) : (
         <div className="h-full w-[100%] lg:w-[65%] dark:bg-dark-bg dark:text-white flex justify-center items-center">
           <div className="no-contacts justify-center flex items-center  w-full bg--400 h-full">
-            <p className="py-1 bg-slate-200 rounded-lg px-4 dark:bg-neutral-800 dark:text-white  shadow-[0px_2px_3px_-1px_rgba(0,0,0,0.1),0px_1px_0px_0px_rgba(25,28,33,0.02),0px_0px_0px_1px_rgba(25,28,33,0.08)]">
+            <p className="py-1 bg-slate-200 rounded-lg px-4 dark:bg-neutral-800 dark:text-white  shadow-[0px_2px_3px_-1px_rgba(0,0,0,0.1),0px_1px_0px_0 px_rgba(25,28,33,0.02),0px_0px_0px_1px_rgba(25,28,33,0.08)]">
               Select a chat to start messaging
             </p>
           </div>
