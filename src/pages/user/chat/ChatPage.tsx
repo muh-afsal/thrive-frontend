@@ -53,9 +53,6 @@ const ChatPage: React.FC = () => {
   const [isRecording, setIsRecording] = useState(false);
   const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
   const [fileUploadLoading, setFileUploadLoading] = useState(false);
-  const [isFetchChatLoading, setIsfetchChatLoading] = useState(false);
-  const [isFetchChatMessageLoading, setIsfetchChatMessageLoading] =
-    useState(false);
   const [recordingDuration, setRecordingDuration] = useState(0);
   const [recordingInterval, setRecordingInterval] = useState<number | null>(
     null
@@ -68,7 +65,6 @@ const ChatPage: React.FC = () => {
 
   const [newChatAdded, setNewChatAdded] = useState(false);
   const [isChatOpen, setIsChatOpen] = useState(false);
-  const [isGroupChat, setIsGroupChat] = useState(false);
   const [selectedChatId, setSelectedChatId] = useState<string | null>(null);
   const [selectedChatName, setSelectedChatName] = useState<string | null>(null);
   const [selectedChatprofileImage, setSelectedChatProfileImage] = useState<
@@ -160,7 +156,6 @@ const ChatPage: React.FC = () => {
   useEffect(() => {
     const fetchAllChats = async () => {
       try {
-        setIsfetchChatLoading(true);
         const response = await CLIENT_API.get("/media/get-all-chats", config);
         const allchatData = response.data.chats;
 
@@ -168,9 +163,7 @@ const ChatPage: React.FC = () => {
       } catch (error) {
         console.error("Error fetching users", error);
         setChatData([]);
-      } finally {
-        setIsfetchChatLoading(false);
-      }
+      } 
     };
 
     fetchAllChats();
@@ -179,7 +172,6 @@ const ChatPage: React.FC = () => {
   useEffect(() => {
     const fetchAllChatMessages = async () => {
       try {
-        setIsfetchChatMessageLoading(true);
         if (isChatOpen) {
           const response = await CLIENT_API.get(
             `/media/get-all-messages?chatId=${selectedChatId}`,
@@ -193,8 +185,6 @@ const ChatPage: React.FC = () => {
       } catch (error) {
         console.error("Error fetching messages", error);
         setChatMessages([]);
-      } finally {
-        setIsfetchChatMessageLoading(false);
       }
     };
 
