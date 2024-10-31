@@ -10,6 +10,14 @@ import { IoArrowBack } from "react-icons/io5";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 import Peer from "peerjs";
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { CLIENT_API } from "@/axios";
+import { config } from "@/common/configuratoins";
+
+
+
+
 
 const CallRoomPage: React.FC = () => {
   const { roomId } = useParams();
@@ -19,17 +27,20 @@ const CallRoomPage: React.FC = () => {
   const [stream, setStream] = useState<MediaStream | null>(null);
   const [isVideoOn, setIsVideoOn] = useState(true);
   const [isAudioOn, setIsAudioOn] = useState(true);
-  const [remoteStreams, setRemoteStreams] = useState<Record<string, MediaStream>>({});
+  const [remoteStreams, setRemoteStreams] = useState<
+    Record<string, MediaStream>
+  >({});
   const [callEnded, setCallEnded] = useState(false);
   const navigate = useNavigate();
   const [isDropdownVisible, setIsDropdownVisible] = useState(false);
   const dropdownRef = useRef<HTMLDivElement | null>(null);
-
+  const [startTime, setStartTime] = useState<Date | null>(null);
   const currentUserId = data?._id;
   const firstName = data?.firstname;
-  const lastName = data?.firstname; 
-  const currentUserName = firstName + ' ' + lastName;
-  const profilePicture = data?.profileImage; 
+  const lastName = data?.lastname;
+  const currentUserName = firstName + " " + lastName;
+  const profilePicture = data?.profileImage;
+ 
 
   useEffect(() => {
     const getMedia = async () => {
@@ -54,7 +65,7 @@ const CallRoomPage: React.FC = () => {
   }, [isVideoOn, isAudioOn]);
 
   useEffect(() => {
-    if (!stream || !currentUserId) return; // Wait for the stream and currentUserId to be ready
+    if (!stream || !currentUserId) return; 
 
     myPeerRef.current = new Peer(currentUserId);
 
@@ -72,37 +83,36 @@ const CallRoomPage: React.FC = () => {
 
     socket?.on("user-joined-room", (userId) => {
       if (!remoteStreams[userId]) {
-          const call = myPeerRef.current?.call(userId, stream);
-          if (call) {
-              call.on("stream", (userVideoStream) => {
-                  addRemoteStream(userId, userVideoStream);
-              });
-  
-              call.on("close", () => {
-                  removeRemoteStream(userId);
-              });
-          }
-      }
-  });
+        const call = myPeerRef.current?.call(userId, stream);
+        if (call) {
+          call.on("stream", (userVideoStream) => {
+            addRemoteStream(userId, userVideoStream);
+          });
 
-    // Send your stream to every connected peer when a new user joins
+          call.on("close", () => {
+            removeRemoteStream(userId);
+          });
+        }
+      }
+    });
+
+    // sending our stream to every connected peer when a new user joins
     socket?.on("existing-users", (users) => {
       users.forEach((userId: string) => {
-          if (userId !== currentUserId && !remoteStreams[userId]) {
-              const call = myPeerRef.current?.call(userId, stream);
-              if (call) {
-                  call.on("stream", (userVideoStream) => {
-                      addRemoteStream(userId, userVideoStream);
-                  });
-  
-                  call.on("close", () => {
-                      removeRemoteStream(userId);
-                  });
-              }
+        if (userId !== currentUserId && !remoteStreams[userId]) {
+          const call = myPeerRef.current?.call(userId, stream);
+          if (call) {
+            call.on("stream", (userVideoStream) => {
+              addRemoteStream(userId, userVideoStream);
+            });
+
+            call.on("close", () => {
+              removeRemoteStream(userId);
+            });
           }
+        }
       });
-  });
-  
+    });
 
     socket?.on("user-disconnected", (userId) => {
       removeRemoteStream(userId);
@@ -116,21 +126,20 @@ const CallRoomPage: React.FC = () => {
     };
   }, [socket, roomId, currentUserId, stream]);
 
- const addRemoteStream = (userId: string, userVideoStream: MediaStream) => {
+  const addRemoteStream = (userId: string, userVideoStream: MediaStream) => {
     setRemoteStreams((prevStreams) => ({
-        ...prevStreams,
-        [userId]: userVideoStream,
+      ...prevStreams,
+      [userId]: userVideoStream,
     }));
-};
+  };
 
-const removeRemoteStream = (userId: string) => {
+  const removeRemoteStream = (userId: string) => {
     setRemoteStreams((prevStreams) => {
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const { [userId]: _, ...rest } = prevStreams;
-        return rest;
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { [userId]: _, ...rest } = prevStreams;
+      return rest;
     });
-};
-
+  };
 
   const toggleVideo = () => {
     setIsVideoOn((prev) => !prev);
@@ -152,15 +161,12 @@ const removeRemoteStream = (userId: string) => {
     }
   };
 
-  const handleEndCall = () => {
-    setCallEnded(true);
-    myPeerRef.current?.destroy();
-    socket?.emit("leave-room", { roomId, userId: currentUserId });
-  };
-
   useEffect(() => {
     const handleOutsideClick = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
         setIsDropdownVisible(false);
       }
     };
@@ -180,15 +186,74 @@ const removeRemoteStream = (userId: string) => {
     setIsDropdownVisible(!isDropdownVisible);
   };
 
+  const copyCallLink = () => {
+    const callLink = window.location.href;
+  
+    navigator.clipboard.writeText(callLink)
+      .then(() => {
+        toast.success("Call link copied to clipboard!", {
+          position: "top-center", 
+          autoClose: 2000,
+        });
+      })
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      .catch((err) => {
+        toast.error("Failed to copy the link.", {
+          position: "top-center",
+          autoClose: 2000,
+        });
+      });
+  };
+
+
+  const handleEndCall = async () => {
+    if (stream) {
+      stream.getTracks().forEach((track) => track.stop());
+    }
+  
+    myPeerRef.current?.destroy();
+    socket?.emit("leave-room", { roomId, userId: currentUserId });
+  
+    const endTime = new Date();
+    const durationInSeconds = (endTime.getTime() - (startTime?.getTime() || 0)) / 1000;
+  
+    const callLog = {
+      roomId,
+      participants: Object.keys(remoteStreams),
+      startTime,
+      endTime,
+      duration: durationInSeconds,
+      callType: 'audio',
+    };
+  
+    try {
+      const response = await CLIENT_API.post("/media/save-callLogs", callLog, config);
+      console.log(response, 'response of the save call logs');
+    } catch (error) {
+      console.log(error, 'error in saving call logs');
+    }
+  
+    setCallEnded(true);
+  };
+  
+  useEffect(() => {
+    if (myPeerRef.current && !startTime) {
+      setStartTime(new Date());
+    }
+  }, [myPeerRef.current]);
+  
+
 
   return callEnded ? (
     <div className="h-screen flex flex-col justify-center items-center dark:bg-dark-bg">
-      <h2 className="text-xl text-gray-700 dark:bg-dark-bg dark:text-gray-300">Call Ended</h2>
+      <h2 className="text-2xl text-gray-700 dark:bg-dark-bg dark:text-gray-300">
+        Call Ended
+      </h2>
       <button
-        className="mt-4 px-6 py-2 bg-blue-600 text-white rounded-lg"
-        onClick={() => navigate("/home")}
+        className="mt-4 px-6 py-2 bg-thirve-blue text-white rounded-lg"
+        onClick={() => navigate("/audio-call")}
       >
-        Go to Home Page
+        Go Back
       </button>
     </div>
   ) : (
@@ -197,33 +262,36 @@ const removeRemoteStream = (userId: string) => {
         <div className="h-10 ml-4 w-10 rounded-full hover:bg-neutral-300 dark:text-white dark:hover:bg-neutral-700 flex justify-center items-center">
           <IoArrowBack size={25} />
         </div>
-        <div onClick={handleClickMoreOption} className="h-10 w-10 flex rounded-full hover:bg-neutral-300 dark:text-white dark:hover:bg-neutral-700 justify-center items-center mr-4">
+        <div
+          onClick={handleClickMoreOption}
+          className="h-10 w-10 flex rounded-full hover:bg-neutral-300 dark:text-white dark:hover:bg-neutral-700 justify-center items-center mr-4"
+        >
           <MdMoreVert size={28} />
         </div>
         <div
-            id="dropdownDots"
-            ref={dropdownRef}
-            className={`absolute right-0 mt-14 w-40  mr-14 bg-white divide-y divide-gray-100 rounded-lg  dark:bg-neutral-700 dark:divide-neutral-600 shadow-[rgba(17,_17,_26,_0.1)_0px_0px_16px] ${
-              isDropdownVisible ? "" : "hidden"
-            }`}
-            aria-labelledby="dropdownMenuIconButton"
-          >
-            <ul className="py-2 text-sm text-gray-700 dark:text-gray-200">
-              <li>
-                <a
-                  href="#"
-                  className="block px-4 py-2 hover:bg-neutral-100 dark:hover:bg-neutral-600 dark:hover:text-white"
-                  >
-                  Copy the call Link and share
-                </a>
-                
-              </li>
-            </ul>
-          </div>
+          id="dropdownDots"
+          ref={dropdownRef}
+          className={`absolute right-0 mt-14 w-60  mr-14 bg-white divide-y divide-gray-100 rounded-lg  dark:bg-neutral-700 dark:divide-neutral-600 shadow-[rgba(17,_17,_26,_0.1)_0px_0px_16px] ${
+            isDropdownVisible ? "" : "hidden"
+          }`}
+          aria-labelledby="dropdownMenuIconButton"
+        >
+          <ul className="py-2 text-sm text-gray-700 dark:text-gray-200">
+            <li>
+              <span
+                className="block px-4 py-2 hover:bg-neutral-100 dark:hover:bg-neutral-600 dark:hover:text-white"
+                onClick={() => copyCallLink()}
+              >
+                Copy the call Link and share
+              </span>
+            </li>
+          </ul>
+        </div>
       </div>
       <div className="h-[83%] w-full">
         <div className="h-[65%] flex justify-center items-center">
-          <div className="h-[90%] w-[90%] md:w-[80%] lg:w-[60%] dark:bg-neutral-800 rounded-xl flex flex-col justify-center items-center">
+          <div className="h-[90%] w-[90%] md:w-[80%] lg:w-[60%] dark:bg-neutral-800 rounded-xl flex flex-col justify-center items-center relative">
+          <p className="text-lg text-white z-50 absolute top-4 left-6">{currentUserName}</p>
             {isVideoOn ? (
               <MediaStreamDisplay stream={stream} />
             ) : (
@@ -233,7 +301,9 @@ const removeRemoteStream = (userId: string) => {
                   alt={currentUserName}
                   className="w-24 h-24 rounded-full object-cover"
                 />
-                <p className="text-lg mt-2 dark:text-white">{currentUserName}</p>
+                <p className="text-lg mt-2 dark:text-white">
+                  {currentUserName}
+                </p>
                 {!isAudioOn && (
                   <FaMicrophoneSlash size={24} className="text-red-500 mt-2" />
                 )}

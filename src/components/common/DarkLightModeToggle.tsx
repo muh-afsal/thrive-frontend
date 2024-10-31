@@ -18,35 +18,21 @@ const ThemeToggle: React.FC = () => {
   };
 
   return (
-    <div className="flex items-center space-x-2 bg--600 mr-5">
-      {/* <span className={`text-sm font-medium transition-colors duration-300 ${isDark ? 'text-gray-400' : 'text-gray-900'}`}>Light</span> */}
+    <div className="flex items-center space-x-2 mr-5">
       <button
         onClick={toggleTheme}
-        className={`relative w-14 h-7 bg--500 rounded-full transition-colors duration-300 focus:outline-none ${
-          isDark ? 'bg-slate-700' : 'bg-yellow-100'
-        }`}
+        className="relative w-9 h-9 rounded-lg flex items-center justify-center transition-colors duration-300 focus:outline-none"
       >
-        <div
-          className={`absolute top-1 w-5 h-5 rounded-full shadow-md transition-all duration-300 ease-in-out ${
-            isDark ? 'translate-x-7 bg-blue-400' : 'translate-x-1 bg-yellow-400'
-          }`}
-        />
-        <div className="absolute inset-0 flex items-center justify-between px-1">
-          <SunIcon
-            size={17}
-            className={`text-yellow-500 transition-all duration-300 ${
-              isDark ? 'opacity-0 -translate-x-2' : 'opacity-100 translate-x-0'
-            }`}
-          />
-          <MoonIcon
-            size={18}
-            className={`text-blue-200 transition-all duration-300 ${
-              isDark ? 'opacity-100 translate-x-[-5px]' : 'opacity-0 translate-x-2'
-            }`}
-          />
-        </div>
+        {isDark ? (
+          <div className="flex items-center justify-center w-10 h-10  rounded-full transition-all duration-300 ease-in-out">
+            <MoonIcon size={23} className="text-white" />
+          </div>
+        ) : (
+          <div className="flex items-center justify-center w-10 h-10  rounded-full transition-all duration-300 ease-in-out">
+            <SunIcon size={22} className="text-neutral-600" />
+          </div>
+        )}
       </button>
-      {/* <span className={`text-sm font-medium transition-colors duration-300 ${isDark ? 'text-white' : 'text-gray-400'}`}>Dark</span> */}
     </div>
   );
 };

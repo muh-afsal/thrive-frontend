@@ -17,12 +17,12 @@ const ConfirmationModal: React.FC<ModalProps> = ({ onClose, onConfirm, size }) =
         >
           &times;
         </button>
-        <div className="text-lg font-bold text-neutral-700 mb-9 dark:text-neutral-400">Are you sure to continue?</div>
+        <div className="text-lg font-semibold text-neutral-700 mb-9 dark:text-neutral-400">Are you sure to continue?</div>
         <div className="flex justify-end space-x-4">
           <button
             type="button"
             onClick={onClose}
-            className="bg-neutral-400 dark:bg-neutral-500 dark:hover:bg-neutral-400 text-neutral-900 py-1 px-4 rounded-lg"
+            className="bg-neutral-300 dark:bg-neutral-500 dark:hover:bg-neutral-400 text-neutral-900 py-1 px-4 rounded-lg"
           >
             Cancel
           </button>

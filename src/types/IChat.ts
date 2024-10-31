@@ -31,6 +31,7 @@ export type Participant = {
       lastname: string;
       profileImage: string;
     };
+    createdAt:Date
   }
   
   export interface ChatMessageBubbleProps {

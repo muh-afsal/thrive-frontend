@@ -6,6 +6,7 @@ interface MediaStreamDisplayProps {
   userName?: string; // Make it optional
 }
 
+
 const MediaStreamDisplay: React.FC<MediaStreamDisplayProps> = ({
   stream,
   profilePicture,
@@ -20,7 +21,6 @@ const MediaStreamDisplay: React.FC<MediaStreamDisplayProps> = ({
       videoElement.srcObject = stream;
     }
 
-    // Cleanup when the component unmounts or stream changes
     return () => {
       if (videoElement) {
         videoElement.srcObject = null;
@@ -48,7 +48,8 @@ const MediaStreamDisplay: React.FC<MediaStreamDisplayProps> = ({
   }
 
   return (
-    <div className="w-full h-full flex justify-center items-center">
+    <div className="w-full h-full flex justify-center items-center ">
+       
       <video
         className='bg-neutral-700 rounded-lg h-full'
         ref={videoRef}
@@ -59,7 +60,7 @@ const MediaStreamDisplay: React.FC<MediaStreamDisplayProps> = ({
           maxWidth: '100%',
           maxHeight: '100%',
           objectFit: 'contain',
-          transform: "scaleX(-1)", // Mirror effect for video
+          transform: "scaleX(-1)", 
         }}
       />
     </div>

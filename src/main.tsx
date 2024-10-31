@@ -7,6 +7,7 @@ import "./index.css";
 import { GOOGLE_CLIENT_ID } from "@/common/configuratoins";
 import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
+import { ToastContainer } from 'react-toastify';
 import { GoogleOAuthProvider } from "@react-oauth/google";
 // import { BrowserRouter, Route, Routes } from "react-router-dom";
 const stripePromise = loadStripe(
@@ -20,6 +21,7 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
       <GoogleOAuthProvider clientId={`${GOOGLE_CLIENT_ID}`}>
         <Elements stripe={stripePromise}>
           <App />
+          <ToastContainer  position="top-center" autoClose={3000} hideProgressBar={true} />
         </Elements>
       </GoogleOAuthProvider>
     </Provider>

@@ -29,6 +29,7 @@ const AddNewChatModal: React.FC<AddNewChatModalProps> = ({
   const [groupIcon, setGroupIcon] = useState<string | null>(null);
   const { data } = useSelector((state: RootState) => state.user);
 
+
   const currentUser = data;
 
   const modalRef = useRef<HTMLDivElement>(null);
@@ -62,11 +63,11 @@ const AddNewChatModal: React.FC<AddNewChatModalProps> = ({
 
   const handleToggle = (view: "chat" | "group") => {
     setToggleView(view);
-    setSearchTerm("");
     setSearchResults([]);
+    setSearchTerm("");
+    setSelectedUser(null);
     setSelectedParticipants([]);
     setGroupName("");
-    setSelectedUser(null);
     setGroupIcon(null);
   };
 
@@ -93,7 +94,6 @@ const AddNewChatModal: React.FC<AddNewChatModalProps> = ({
 
 
 
-  // funciton to create the individual chat 
   const handleCreateChat = async () => {
     const selectedUserId = selectedUser?._id;
     const currentUserId = currentUser?._id;
@@ -275,9 +275,9 @@ const AddNewChatModal: React.FC<AddNewChatModalProps> = ({
         </h2>
 
         {toggleView === "group" && (
-          <div className="create-group-section mt-4">
+          <div className="create-group-section mt-4 ">
             <div
-              className={`relative flex justify-center items-center p-2 rounded-lg w-full border dark:border-neutral-500 border-gray-200 cursor-pointer ${
+              className={`relative dark:bg-neutral-600  flex justify-center items-center p-2 rounded-lg w-full border border-dashed dark:border-neutral-400 border-gray-200 cursor-pointer ${
                 groupIcon ? "bg-transparent" : "bg-slate-100"
               } mb-4`}
               onClick={() => document.getElementById("groupIconInput")?.click()}
@@ -287,15 +287,15 @@ const AddNewChatModal: React.FC<AddNewChatModalProps> = ({
                 id="groupIconInput"
                 accept="image/*"
                 onChange={handleGroupIconChange}
-                className="hidden"
+                className="hidden "
               />
               {!groupIcon && (
-                <div className="flex items-center w-full pl-5 ">
-                  <div className="bg-gray-300 p-2 rounded-full mr-4">
+                <div className="flex items-center  w-full pl-5 ">
+                  <div className=" bg-gray-300 p-2 rounded-full mr-4">
                     <FaCamera className="w-5 h-5 text-gray-600" />
                   </div>
                   <div className="w-[100%] ">
-                    <span className="text-gray-500">
+                    <span className="text-gray-500 dark:text-neutral-400">
                       Upload Group Icon (Optional)
                     </span>
                   </div>
@@ -314,7 +314,7 @@ const AddNewChatModal: React.FC<AddNewChatModalProps> = ({
               value={groupName}
               onChange={(e) => setGroupName(e.target.value)}
               placeholder="Enter group name"
-              className="border bg-slate-100 border-gray-300 dark:bg-neutral-700 dark:border-neutral-500 dark:text-white rounded-md p-2 mb-4 w-full focus:outline-none focus:border-blue-200"
+              className="border bg-slate-100 border-gray-300 dark:bg-neutral-700 dark:border-neutral-500 dark:text-white rounded-md p-2 mb-1 w-full focus:outline-none focus:border-blue-200"
             />
           </div>
         )}
@@ -369,6 +369,12 @@ const AddNewChatModal: React.FC<AddNewChatModalProps> = ({
         </div>
 
         <div className="mt-4 flex justify-end">
+        <button
+            onClick={onClose}
+            className="bg-neutral-600 text-white mr-2 px-4 py-1 rounded-lg hover:bg-neutral-500 transition duration-200"
+          >
+            Cancel
+          </button>
           {toggleView === "chat" ? (
             <button
               onClick={handleCreateChat}
@@ -384,12 +390,7 @@ const AddNewChatModal: React.FC<AddNewChatModalProps> = ({
               Create Group
             </button>
           )}
-          <button
-            onClick={onClose}
-            className="bg-gray-500 text-white ml-2 px-4 py-1 rounded-lg hover:bg-gray-600 transition duration-200"
-          >
-            Cancel
-          </button>
+         
         </div>
       </div>
     </div>

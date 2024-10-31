@@ -103,10 +103,9 @@ const ChatPage: React.FC = () => {
     return () => clearTimeout(timeoutId);
   }, [chatMessages, typing, selectedChatId, socket, currentUserId]);
 
-
   useEffect(() => {
     if (bottomRef.current) {
-      bottomRef.current.scrollIntoView({ behavior: 'smooth' });
+      bottomRef.current.scrollIntoView({ behavior: "smooth" });
     }
   }, [chatMessages]);
 
@@ -246,7 +245,7 @@ const ChatPage: React.FC = () => {
             attachments: attachments,
             chat: chatId,
             content: inputValue || "",
-            createdAt: new Date().toLocaleTimeString(),
+            createdAt: new Date(),
             sender: sender,
           };
           if (socket) {
@@ -290,9 +289,9 @@ const ChatPage: React.FC = () => {
   });
 
   const handleRemoveFilePreview = (index: number) => {
-    if(uploadedFileUrls){
+    if (uploadedFileUrls) {
       setUploadedFileUrls((prev) => prev.filter((_, i) => i !== index));
-    }else{
+    } else {
       setUploadedFileUrls([]);
       setMessageFiles([]);
     }
@@ -307,7 +306,7 @@ const ChatPage: React.FC = () => {
       const files = Array.from(target.files);
       const previewUrls = files.map((file) => ({
         url: URL.createObjectURL(file),
-        type: "image", 
+        type: "image",
       }));
       setUploadedFileUrls((prev) => [...prev, ...previewUrls]);
 
@@ -333,7 +332,7 @@ const ChatPage: React.FC = () => {
       const files = Array.from(target.files);
       const previewUrls = files.map((file) => ({
         url: URL.createObjectURL(file),
-        type: "video", 
+        type: "video",
       }));
       setUploadedFileUrls((prev) => [...prev, ...previewUrls]);
 
@@ -523,30 +522,21 @@ const ChatPage: React.FC = () => {
                 key={chat._id}
                 onClick={() => handleChatOpen(chat._id, chat)}
               >
-                {chat.isGroupChat ? (
-                  <UserContact
-                    profileImage={chat.groupIcon}
-                    fullName={chat.name}
-                    lastMessage={
-                      chat.lastMessage ? chat.lastMessage : "No messages yet"
-                    }
-                  />
-                ) : (
-                  chat.participants
-                    .filter((participant) => participant._id !== currentUserId)
-                    .map((participant) => (
-                      <UserContact
-                        key={participant._id}
-                        profileImage={participant.profileImage}
-                        fullName={`${participant.firstname} ${participant.lastname}`}
-                        lastMessage={
-                          chat.lastMessage
-                            ? chat.lastMessage
-                            : "No messages yet"
-                        }
-                      />
-                    ))
-                )}
+                <UserContact
+                  profileImage={
+                    chat.isGroupChat
+                      ? chat.groupIcon
+                      : chat.participants[0].profileImage
+                  }
+                  fullName={
+                    chat.isGroupChat
+                      ? chat.name
+                      : `${chat.participants[0].firstname} ${chat.participants[0].lastname}`
+                  }
+                  lastMessage={
+                    chat.lastMessage ? chat.lastMessage : "No messages yet"
+                  }
+                />
               </div>
             ))}
           </>
@@ -611,8 +601,8 @@ const ChatPage: React.FC = () => {
   Your browser does not support the audio element.
 </audio> */}
 
-            <div className="flex bg--400 flex-col-reverse space-y-3 pb-7 space-y-reverse p-4 overflow-y-auto h-full scrollbar-custom">
-            <div ref={bottomRef} />
+            <div className="flex bg-blue-50 dark:bg-neutral-950 flex-col-reverse space-y-3 pb-7 space-y-reverse p-4 overflow-y-auto h-full scrollbar-custom">
+              <div ref={bottomRef} />
               {chatMessages &&
                 chatMessages
                   .slice()
@@ -628,7 +618,6 @@ const ChatPage: React.FC = () => {
                       />
                     );
                   })}
-                 
             </div>
           </div>
           {/* Preview Section */}

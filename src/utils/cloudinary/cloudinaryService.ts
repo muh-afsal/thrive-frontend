@@ -3,7 +3,7 @@ import axios from 'axios';
 const cloudinaryimageUpload = async (file: File): Promise<string> => {
   const formData = new FormData();
   formData.append('file', file);
-  formData.append('upload_preset', 'thrive_app_images'); // Add upload preset here
+  formData.append('upload_preset', 'thrive_app_images'); 
 
   try {
     const response = await axios.post(
@@ -21,9 +21,8 @@ const cloudinaryimageUpload = async (file: File): Promise<string> => {
 const cloudinaryUpload = async (file: File, type: 'image' | 'video' | 'audio' | 'document'): Promise<string> => {
   const formData = new FormData();
   formData.append('file', file);
-  formData.append('upload_preset', 'thrive_app_images'); // Add upload preset here
+  formData.append('upload_preset', 'thrive_app_images'); 
 
-  // Determine the upload URL based on the file type
   let uploadUrl;
   switch (type) {
     case 'image':
@@ -51,6 +50,11 @@ const cloudinaryUpload = async (file: File, type: 'image' | 'video' | 'audio' | 
     console.error(`Error uploading ${type} to Cloudinary`, error);
     throw new Error('Failed to upload file');
   }
+};
+
+// Upload a single video file to Cloudinary
+export const uploadSingleVideo = async (file: File): Promise<string> => {
+  return cloudinaryUpload(file, 'video');
 };
 
 // Upload multiple images to Cloudinary

@@ -1,13 +1,23 @@
 import { Link } from "react-router-dom";
-import logo from "@/assets/iocns/thive-logo.png";
+import Ligntlogo from "@/assets/iocns/thrive-logo-light.svg";
+import DarkLogo from "@/assets/iocns/thrive-logo-light.svg";
+import { useEffect, useState } from "react";
+import ThemeToggle from "../common/DarkLightModeToggle";
 
 export default function Header() {
+  const [darkMode, setDarkMode] = useState(false);
+
+  useEffect(() => {
+    const storedDarkMode = localStorage.getItem("darkMode");
+    setDarkMode(storedDarkMode === "true");
+  }, []);
+
   return (
     <div className="bg-transparent bg--400 ">
       <div className="flex justify-around items-center mx-auto p-3 bg-transparent">
-        <div className="flex justify-between items-center bg-transparent">
+        <div className="flex justify-between items-center bg-transparent dark:pt-1">
           <Link to="/">
-            <img src={logo} className="object-contain  w-fit h-9 mr-14 " alt="logo" />
+            <img src={darkMode ? DarkLogo : Ligntlogo} className="object-contain   w-fit h-8 mr-14 " alt="logo" />
           </Link>
 
           <ul className="flex justify-between gap-9 items-start text-sm bg-transparent ">
@@ -31,7 +41,9 @@ export default function Header() {
                 profile
               </li>
             </Link>
+
           </ul>
+          <ThemeToggle />
         </div>
         {/* <Link to="/signup">
           <button className="bg-blue-600 text-slate-50 rounded-md  px-3 py-1 font-semibold">

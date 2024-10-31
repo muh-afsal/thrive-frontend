@@ -6,7 +6,7 @@ import Sidebar from '@/components/sidebars/CategorySidebar';
 import GeneralInfo from '@/components/profile/Generalnfo';
 import Security from '@/components/profile/Security';
 import Billing from '@/components/profile/Billing';
-import Notification from '@/components/profile/Notification';
+import Notification from '@/components/profile/NotificationSettings';
 
 const Profile: React.FC = () => {
   const [activeComponent, setActiveComponent] = useState<React.ReactNode>(<GeneralInfo />);
