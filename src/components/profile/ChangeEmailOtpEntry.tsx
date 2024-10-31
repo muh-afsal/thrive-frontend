@@ -30,8 +30,8 @@ const ChangeEmailOtpEntry: React.FC<ForgetOtpEntryProps> = ({ email, onOtpVerifi
   const { data } = useSelector((state: RootState) => state.user);
   const inputsRef = useRef<(HTMLInputElement | null)[]>([]);
   const timerRef = useRef<NodeJS.Timeout | null>(null); 
-  const [currentEmail,setCurrentEmail]=useState(data?.email)
-  const [newEmail,setNewEmail]=useState(email)
+  const [currentEmail]=useState(data?.email)
+  const [newEmail]=useState(email)
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
 

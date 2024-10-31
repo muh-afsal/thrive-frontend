@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState, useEffect } from "react";
-import { FormikHelpers, useFormik } from "formik";
+import { useFormik } from "formik";
 import { FaTrash } from "react-icons/fa";
 import { MdEdit } from "react-icons/md";
 import { AppDispatch, RootState } from "@/redux/store";
@@ -12,8 +12,6 @@ import { FaSpinner } from "react-icons/fa";
 import { fetchUser } from "@/redux/actions/user/fetchUserActions";
 import { logout } from "@/redux/actions/auth/logoutUserActions";
 import { useNavigate } from "react-router-dom";
-import { Formik, Field, Form, ErrorMessage } from "formik";
-import * as Yup from "yup";
 import { config } from "@/common/configuratoins";
 import Modal from "../modals/CommonModal";
 import ChangeEmailImage from "@/assets/images/profile/changeemailImage.png";

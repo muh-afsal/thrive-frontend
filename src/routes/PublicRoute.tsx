@@ -8,7 +8,8 @@ interface PublicRouteProps {
 }
 
 const PublicRoute: React.FC<PublicRouteProps> = ({ restricted = false }) => {
-  const { email } = useAppSelector((state: RootState) => state.auth);
+  const { data } = useAppSelector((state: RootState) => state.user);
+  const email=data?.email;
 
   if (email && restricted) {
     return <Navigate to="/home" replace />;

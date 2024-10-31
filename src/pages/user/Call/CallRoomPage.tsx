@@ -197,7 +197,7 @@ const CallRoomPage: React.FC = () => {
         });
       })
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      .catch((err) => {
+      .catch(() => {
         toast.error("Failed to copy the link.", {
           position: "top-center",
           autoClose: 2000,
