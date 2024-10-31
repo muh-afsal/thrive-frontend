@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import Ligntlogo from "@/assets/iocns/thrive-logo-light.svg";
 import DarkLogo from "@/assets/iocns/thrive-logo-light.svg";
 import { useEffect, useState } from "react";
-import ThemeToggle from "../common/DarkLightModeToggle";
+// import ThemeToggle from "../common/DarkLightModeToggle";
 
 export default function Header() {
   const [darkMode, setDarkMode] = useState(false);
