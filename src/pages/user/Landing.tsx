@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import Footer from "@/components/Footer";
 import LandingNavbar from "@/components/navbars/LandingNavbar";
 import landingbg from "@/assets/images/landing/landingbg.png";
@@ -12,7 +12,7 @@ import dashboardImage from "@/assets/images/landing/1 1.png";
 import { Link } from "react-router-dom";
 
 const Landing: React.FC = () => {
-  const [planMonthly, setPlan] = useState<boolean>(false);
+  // const [planMonthly, setPlan] = useState<boolean>(false);
   const isDarkMode = document.documentElement.classList.contains('dark');
   return (
     <>
@@ -52,7 +52,7 @@ const Landing: React.FC = () => {
             </div>
           </div>
         </section>
-        <section className="h-[800px]  md:h-[700px] flex items-center">
+        <section className="h-[800px]  md:h-[700px] flex items-center ">
           <div className=" h-5/6  flex flex-col md:flex-row items-center">
             <div className="  h-[70%] flex flex-col md:w-[60%] md:h-full justify-center items-center md:mt-9 gap-2 p-3">
               <div className=" md:w-[80%]  h-[70%] flex flex-col justify-center xl:p-10 p-4 gap-4">
@@ -90,7 +90,7 @@ const Landing: React.FC = () => {
             </div>
           </div>
         </section>
-        <section className=" h-[1600px]  md:h-[700px] flex items-center bg-blue-50 dark:bg-neutral-800">
+        <section className=" h-[1600px]  md:h-[700px] flex items-center bg-blue-50 dark:bg-neutral-900">
           <div className="h-[90%] w-screen flex flex-col md:flex-row items-center justify-center">
             <div className=" w h-[90%] xl:w-[95%] flex flex-col justify-center items-center ">
               <div className="w-full  ">
@@ -188,7 +188,7 @@ const Landing: React.FC = () => {
             </div>
           </div>
         </section>
-        <section className=" h-[700px]  md:h-[300px] flex items-center dark:bg-neutral-800  bg-blue-50 justify-center">
+        <section className=" h-[700px]  md:h-[300px] flex items-center dark:bg-neutral-900  bg-blue-50 justify-center">
           <div className="w-[90%] md:w-[95%] lg:w-[70%] h-5/6 flex flex-col  md:flex md:flex-row md:justify-center md:items-center gap-8">
             <div className="w-full  h-2/6  md:h-5/6  p-3  flex flex-col justify-center items-center ">
               <h1 className="text-4xl md:text-5xl xl:text-5xl font-bold text-center  ">
@@ -216,7 +216,7 @@ const Landing: React.FC = () => {
             </div>
           </div>
         </section>
-        <section className="h-full md:h-[900px] flex flex-col justify-center items-center">
+        {/* <section className="h-full md:h-[900px] flex flex-col justify-center items-center">
           <div className="h-[300px]  w-full flex flex-col justify-center items-center">
             <h1 className="text-3xl md:text-3xl xl:text-4xl font-bold text-center">
               Choose Plan That's Right For You
@@ -259,7 +259,8 @@ const Landing: React.FC = () => {
               
             </div>
           </div>
-        </section>
+        </section> */}
+
         <Footer />
       </div>
     </>

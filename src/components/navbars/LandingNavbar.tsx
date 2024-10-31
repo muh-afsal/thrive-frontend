@@ -32,18 +32,13 @@ export default function Header() {
               </li>
             </Link>
             <Link to="/about">
-              <li className="text-slate-500 rounded-md px-3 py-1 dark:text-white font-semibold bg-transparent">
+              <li className="text-slate-500 rounded-md px-3 mr-7 py-1 dark:text-white font-semibold bg-transparent">
                 About
-              </li>
-            </Link>
-            <Link to="/profile">
-              <li className="text-slate-500 rounded-md px-3 py-1 dark:text-white font-semibold bg-transparent">
-                profile
               </li>
             </Link>
 
           </ul>
-          <ThemeToggle />
+          {/* <ThemeToggle /> */}
         </div>
         {/* <Link to="/signup">
           <button className="bg-blue-600 text-slate-50 rounded-md  px-3 py-1 font-semibold">
