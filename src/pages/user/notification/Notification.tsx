@@ -1,13 +1,13 @@
-import { useSocket } from "@/contexts/SocketContext";
+// import { useSocket } from "@/contexts/SocketContext";
 import { Bell } from "lucide-react";
 import React, { useState } from "react";
 
 const Notification: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const { notificationSocketService } = useSocket();
-  const h=5;
+  // const { notificationSocketService } = useSocket();
+  // const h=5;
 
-  notificationSocketService?.emit("text",{h})
+  // notificationSocketService?.emit("text",{h})
 
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
