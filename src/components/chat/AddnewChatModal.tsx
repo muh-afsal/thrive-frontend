@@ -28,6 +28,7 @@ const AddNewChatModal: React.FC<AddNewChatModalProps> = ({
   const [selectedUser, setSelectedUser] = useState<any | null>(null);
   const [groupIcon, setGroupIcon] = useState<string | null>(null);
   const { data } = useSelector((state: RootState) => state.user);
+  const defaultGroupIcon="https://res.cloudinary.com/djo6yu43t/image/upload/v1730525849/Pngtree_group_icon_5097424_bbnioq.png";
 
 
   const currentUser = data;
@@ -130,7 +131,6 @@ const AddNewChatModal: React.FC<AddNewChatModalProps> = ({
 
 
 
-  // funciton to create the group chat 
   const handleCreateGroup = async () => {
     if (!groupName || selectedParticipants.length < 2) {
       alert("Please enter a group name and select at least 3 participants.");
@@ -144,7 +144,7 @@ const AddNewChatModal: React.FC<AddNewChatModalProps> = ({
     const groupData = {
       name: groupName,
       participants,
-      groupIcon,
+      groupIcon: groupIcon || defaultGroupIcon,
       currentUserId,
     };
     console.log(groupData,'lllllllllllllllllllllllllllllllllll');
@@ -171,13 +171,14 @@ const AddNewChatModal: React.FC<AddNewChatModalProps> = ({
     } catch (error) {
       console.log(error);
     }
-
+  
     console.log("Creating a new group", {
       groupName,
       selectedParticipants,
       groupIcon,
     });
   };
+  
 
   
   const handleGroupIconChange = async (

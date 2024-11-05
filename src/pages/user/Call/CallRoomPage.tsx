@@ -246,9 +246,7 @@ const CallRoomPage: React.FC = () => {
 
   return callEnded ? (
     <div className="h-screen flex flex-col justify-center items-center dark:bg-dark-bg">
-      <h2 className="text-2xl text-gray-700 dark:bg-dark-bg dark:text-gray-300">
-        Call Ended
-      </h2>
+      <h2 className="text-2xl text-gray-700 dark:text-gray-300">Call Ended</h2>
       <button
         className="mt-4 px-6 py-2 bg-thirve-blue text-white rounded-lg"
         onClick={() => navigate("/audio-call")}
@@ -271,7 +269,7 @@ const CallRoomPage: React.FC = () => {
         <div
           id="dropdownDots"
           ref={dropdownRef}
-          className={`absolute right-0 mt-14 w-60  mr-14 bg-white divide-y divide-gray-100 rounded-lg  dark:bg-neutral-700 dark:divide-neutral-600 shadow-[rgba(17,_17,_26,_0.1)_0px_0px_16px] ${
+          className={`absolute right-0 mt-14 w-60 mr-14 bg-white divide-y divide-gray-100 rounded-lg dark:bg-neutral-700 dark:divide-neutral-600 shadow-lg ${
             isDropdownVisible ? "" : "hidden"
           }`}
           aria-labelledby="dropdownMenuIconButton"
@@ -291,7 +289,9 @@ const CallRoomPage: React.FC = () => {
       <div className="h-[83%] w-full">
         <div className="h-[65%] flex justify-center items-center">
           <div className="h-[90%] w-[90%] md:w-[80%] lg:w-[60%] dark:bg-neutral-800 rounded-xl flex flex-col justify-center items-center relative">
-          <p className="text-lg text-white z-50 absolute top-4 left-6">{currentUserName}</p>
+            <p className="text-lg text-white z-50 absolute top-4 left-6">
+              {currentUserName}
+            </p>
             {isVideoOn ? (
               <MediaStreamDisplay stream={stream} />
             ) : (
@@ -301,9 +301,7 @@ const CallRoomPage: React.FC = () => {
                   alt={currentUserName}
                   className="w-24 h-24 rounded-full object-cover"
                 />
-                <p className="text-lg mt-2 dark:text-white">
-                  {currentUserName}
-                </p>
+                <p className="text-lg mt-2 dark:text-white">{currentUserName}</p>
                 {!isAudioOn && (
                   <FaMicrophoneSlash size={24} className="text-red-500 mt-2" />
                 )}
@@ -360,6 +358,7 @@ const CallRoomPage: React.FC = () => {
       </div>
     </div>
   );
+  
 };
 
 export default CallRoomPage;

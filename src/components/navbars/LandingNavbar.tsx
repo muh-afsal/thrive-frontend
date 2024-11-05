@@ -1,44 +1,50 @@
 import { Link } from "react-router-dom";
-import Ligntlogo from "@/assets/iocns/thrive-logo-light.svg";
-import DarkLogo from "@/assets/iocns/thrive-logo-light.svg";
-import { useEffect, useState } from "react";
-// import ThemeToggle from "../common/DarkLightModeToggle";
+import ThemeToggle from "../common/DarkLightModeToggle";
+import ThriveLogo from "../common/ThriveLogo";
 
 export default function Header() {
-  const [darkMode, setDarkMode] = useState(false);
-
-  useEffect(() => {
-    const storedDarkMode = localStorage.getItem("darkMode");
-    setDarkMode(storedDarkMode === "true");
-  }, []);
 
   return (
-    <div className="bg-transparent bg--400 ">
-      <div className="flex justify-around items-center mx-auto p-3 bg-transparent">
-        <div className="flex justify-between items-center bg-transparent dark:pt-1">
-          <Link to="/">
-            <img src={darkMode ? DarkLogo : Ligntlogo} className="object-contain   w-fit h-8 mr-14 " alt="logo" />
-          </Link>
+    <div className="bg-transparent mb-5 ">
+      <div className="flex justify-center items-center  mx-auto p-3 bg-transparent">
+        <div className="flex justify-around items-center bg-transparent w-[90%]">
+         <ThriveLogo/>
 
-          <ul className="flex justify-between gap-9 items-start text-sm bg-transparent ">
+          <ul className="md:flex justify-between hidden gap-12 items-start text-base bg-transparent ">
             <Link to="/">
-              <li className="text-slate-500 rounded-md px-3 py-1 dark:text-white font-semibold bg-transparent">
+              <li className="text-slate-500 hover:text-blue-500 dark:hover:text-blue-500 rounded-md px-3 py-1 dark:text-white font-semibold bg-transparent">
                 Home
               </li>
             </Link>
             <Link to="/contact">
-              <li className="text-slate-500 rounded-md px-3 py-1 dark:text-white font-semibold bg-transparent">
+              <li className="text-slate-500 hover:text-blue-500 dark:hover:text-blue-500 rounded-md px-3 py-1 dark:text-white font-semibold bg-transparent">
                 Contact
               </li>
             </Link>
             <Link to="/about">
-              <li className="text-slate-500 rounded-md px-3 mr-7 py-1 dark:text-white font-semibold bg-transparent">
+              <li className="text-slate-500 hover:text-blue-500 dark:hover:text-blue-500 rounded-md px-3 mr-7 py-1 dark:text-white font-semibold bg-transparent">
                 About
               </li>
             </Link>
 
           </ul>
-          {/* <ThemeToggle /> */}
+          <ul className="flex">
+          <ThemeToggle  />
+            <Link to="/signup ">
+              <li
+                className={`px-3 py-1 font-semibold hover:text-blue-500 dark:hover:text-blue-500 rounded-md `}
+              >
+                SignUp
+              </li>
+            </Link>
+            <Link to="/login">
+              <li
+                className={`px-3 py-1 font-semibold hover:text-blue-500 dark:hover:text-blue-500 rounded-md `}
+              >
+                Login
+              </li>
+            </Link>
+          </ul>
         </div>
         {/* <Link to="/signup">
           <button className="bg-blue-600 text-slate-50 rounded-md  px-3 py-1 font-semibold">

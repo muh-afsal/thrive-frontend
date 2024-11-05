@@ -27,6 +27,7 @@ import MyBlogDetail from "./pages/user/blog/MyBlogDetails";
 import EventLayout from "./pages/user/events/EventLayout";
 import EventDash from "./pages/user/events/EventDash";
 import PastEvents from "./pages/user/events/PastEvents";
+import ConferenceLayout from "./pages/user/conference/ConferenceLayout";
 
 const AppRoutes = () => (
   <Routes>
@@ -47,6 +48,8 @@ const AppRoutes = () => (
         <Route path=":chatType" element={<ChatPage />} />
       </Route>
       <Route path="/audio-call" element={<CallLayout />} />
+      <Route path="/call-room/:roomId" element={<CallRoomPage />} />
+      <Route path="/video-call" element={<ConferenceLayout />} />
       <Route path="/call-room/:roomId" element={<CallRoomPage />} />
       <Route path="/completeprofile" element={<Completeprofile />} />
       <Route path="/payment-start" element={<ProVersionPayment />} />

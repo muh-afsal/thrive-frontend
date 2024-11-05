@@ -56,8 +56,8 @@ const SignUp: React.FC = () => {
       <div>
         <Header />
       </div>
-      <section className="w-full dark:bg-dark-bg  h-screen pt-7 px-3 flex justify-center ">
-        <div className="w-full h-[80%] dark:bg-neutral-900 md:w-[500px] rounded-xl pb-10 mt-9 flex justify-center pt-9 items-center flex-col">
+      <section className="w-full dark:bg-dark-bg items-center  h-screen pt-7 px-3 flex justify-center ">
+        <div className="w-full h-[80%] md:w-[500px] rounded-xl pb-10 mt-9 flex justify-center pt-9 items-center flex-col">
           <div className="flex flex-col justify-center  items-center text-center p-4 mb-4">
             <h1 className="mb-2 font-extrabold text-2xl lg:text-3xl dark:text-dark-text ">
               Welcome to Thrive,

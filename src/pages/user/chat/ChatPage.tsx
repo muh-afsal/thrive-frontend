@@ -73,6 +73,7 @@ const ChatPage: React.FC = () => {
   const [chatMessages, setChatMessages] = useState<IMessage[]>([]);
   const [typing, setTyping] = useState(false);
   const { socket } = useSocket();
+  // const socket=mediaSocketService;
   const bottomRef = useRef<HTMLDivElement | null>(null);
 
   // console.log(
@@ -156,7 +157,7 @@ const ChatPage: React.FC = () => {
   useEffect(() => {
     const fetchAllChats = async () => {
       try {
-        const response = await CLIENT_API.get("/media/get-all-chats", config);
+        const response = await CLIENT_API.get(`/media/get-all-chats/${currentUserId}`, config);
         const allchatData = response.data.chats;
 
         setChatData(allchatData);
@@ -472,10 +473,10 @@ const ChatPage: React.FC = () => {
   const renderChatHeader = () => {
     return (
       <div className="h-[9%] bg--400 flex border-b border-gray-200 dark:border-neutral-700">
-        <div className="w-[70px] bg--500 h-full flex justify-center items-center">
+        <div className="w-[70px] bg--500 h-full flex justify-center items-center ">
           <img
             src={selectedChatprofileImage || undefined}
-            className="rounded-md object-cover bg--400 h-11 w-11"
+            className="rounded-md object-cover  h-11 w-11 "
             alt=""
           />
         </div>
@@ -502,40 +503,47 @@ const ChatPage: React.FC = () => {
   const renderContacts = () => {
     const contacts = chatData;
     const contactsAvailable = contacts.length > 0;
-
+  
     if (chatType === "all-inbox" || chatType === "groups") {
       if (contactsAvailable) {
         return (
           <>
-            {contacts.map((chat: Chat) => (
-              <div
-                key={chat._id}
-                onClick={() => handleChatOpen(chat._id, chat)}
-              >
-                <UserContact
-                  profileImage={
-                    chat.isGroupChat
-                      ? chat.groupIcon
-                      : chat.participants[0].profileImage
-                  }
-                  fullName={
-                    chat.isGroupChat
-                      ? chat.name
-                      : `${chat.participants[0].firstname} ${chat.participants[0].lastname}`
-                  }
-                  lastMessage={
-                    chat.lastMessage ? chat.lastMessage : "No messages yet"
-                  }
-                />
-              </div>
-            ))}
+            {contacts.map((chat: Chat) => {
+              const otherParticipant = chat.participants.find(
+                (participant) => participant._id !== currentUserId
+              );
+  
+              return (
+                <div
+                  key={chat._id}
+                  onClick={() => handleChatOpen(chat._id, chat)}
+                >
+                  <UserContact
+                    profileImage={
+                      chat.isGroupChat
+                        ? chat.groupIcon
+                        : otherParticipant?.profileImage ||
+                          "https://res.cloudinary.com/djo6yu43t/image/upload/v1725124534/IMG_20240831_224439_v7rnsg.jpg"
+                    }
+                    fullName={
+                      chat.isGroupChat
+                        ? chat.name
+                        : `${otherParticipant?.firstname ?? ''} ${otherParticipant?.lastname ?? ''}`
+                    }
+                    lastMessage={
+                      chat.lastMessage ? chat.lastMessage : "No messages yet"
+                    }
+                  />
+                </div>
+              );
+            })}
           </>
         );
       } else {
         return (
           <div className="flex justify-center items-center h-full">
             <p className="py-1 bg-slate-200 rounded-lg px-4 dark:bg-neutral-800 dark:text-white  shadow-[0px_2px_3px_-1px_rgba(0,0,0,0.1),0px_1px_0px_0px_rgba(25,28,33,0.02),0px_0px_0px_1px_rgba(25,28,33,0.08)]">
-              No recent chat ,{" "}
+              No recent chat,{" "}
               <button className="text-blue-500 " onClick={handleOpenModal}>
                 create a new chat.
               </button>
@@ -545,6 +553,8 @@ const ChatPage: React.FC = () => {
       }
     }
   };
+  
+  
 
   return (
     <div className="dark:bg-neutral-900 w-full  flex h-[100%] relative">

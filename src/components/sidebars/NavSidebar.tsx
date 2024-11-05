@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import logo from "../../assets/iocns/thrive-icon-cropped.png"; 
 import {
   CalendarRange,
@@ -14,10 +14,9 @@ import {
 import { FaBlog } from "react-icons/fa6";
 
 const NavSidebar: React.FC = () => {
+  const location = useLocation();
   const [isDarkMode, setIsDarkMode] = useState<boolean>(false);
   const [selectedIcon, setSelectedIcon] = useState<string>("");
-
-  // const location = useLocation();
 
   useEffect(() => {
     const darkMode = localStorage.getItem("darkMode");
@@ -28,6 +27,17 @@ const NavSidebar: React.FC = () => {
       setSelectedIcon(savedIcon);
     }
   }, []);
+
+  useEffect(() => {
+    const mainPath = location.pathname.split("/").filter(Boolean)[0]; 
+  
+    if (mainPath) { 
+      setSelectedIcon(mainPath);
+      localStorage.setItem("selectedIcon", mainPath);
+    }
+  }, [location.pathname]);
+  
+  
 
   const iconColor = (iconName: string) =>
     selectedIcon === iconName ? "#318CE7" : isDarkMode ? "#989898" : "#505050";
@@ -73,22 +83,22 @@ const NavSidebar: React.FC = () => {
               <Phone color={iconColor("audio-call")} size={23} />
             </li>
           </Link>
-          <li
-            onClick={() => handleIconClick("video-call")}
-            className="w-11 h-11 bg-contain flex justify-center items-center"
-          >
-            <Video color={iconColor("video-call")} size={25} />
-          </li>
-       
+          <Link to="/video-call">
+            <li
+              onClick={() => handleIconClick("video-call")}
+              className="w-11 h-11 bg-contain flex justify-center items-center"
+            >
+              <Video color={iconColor("video-call")} size={25} />
+            </li>
+          </Link>
           <Link to="/event">
             <li
               onClick={() => handleIconClick("event")}
               className="w-11 h-11 bg-contain flex justify-center items-center"
             >
-              <CalendarRange  color={iconColor("event")} size={23} />
+              <CalendarRange color={iconColor("event")} size={23} />
             </li>
           </Link>
-
           <Link to="/tasks">
             <li
               onClick={() => handleIconClick("tasks")}
@@ -102,7 +112,7 @@ const NavSidebar: React.FC = () => {
               onClick={() => handleIconClick("blog")}
               className="w-11 h-11 bg-contain flex justify-center items-center relative group"
             >
-              <FaBlog  color={iconColor("blog")} size={21} />
+              <FaBlog color={iconColor("blog")} size={21} />
               <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 absolute left-full ml-2 bg-gray-500 text-white text-xs rounded py-1 px-2">
                 hello
               </span>

@@ -124,9 +124,9 @@ const Login: React.FC = () => {
       <Helmet>
         <title>Login to Thrive</title>
       </Helmet>
-      <div className="">
+      <div className=" ">
         <Header />
-        <section className="w-full h-screen pt-7 px-3 flex justify-center bg-white dark:bg-dark-bg dark:text-dark-text">
+        <section className="w-full h-screen pt-7 px-3 flex justify-center items-center bg-white dark:bg-dark-bg dark:text-dark-text">
           <div className="w-full dark:mt-11 h-[80%] flex justify-center pb-4 items-center flex-col">
            <div className="bg-white dark:bg-neutral-900 flex flex-col items-center p-7 lg:p9 rounded-xl ">
             <div className="flex flex-col bg--400 justify-center items-center text-center p-4 mb-4">

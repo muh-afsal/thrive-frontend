@@ -1,8 +1,6 @@
-import React from "react";
+import React, { useState } from "react";
 import Footer from "@/components/Footer";
 import LandingNavbar from "@/components/navbars/LandingNavbar";
-import landingbg from "@/assets/images/landing/landingbg.png";
-import landingbgDark from "@/assets/images/landing/landingbgDark.png";
 import potratesImage from "@/assets/images/landing/potrait.png";
 import lnading1Image from "@/assets/images/landing/landing2.png";
 import serviceOffertingImage from "@/assets/images/landing/cartoon-ai-robot-scene.jpg";
@@ -10,23 +8,20 @@ import collaborationImage from "@/assets/images/landing/people-collaborate-cozy-
 import productivityImage from "@/assets/images/landing/sided-view-hand-typing-keyboard.jpg";
 import dashboardImage from "@/assets/images/landing/1 1.png";
 import { Link } from "react-router-dom";
+import { ChevronRight } from "lucide-react";
 
 const Landing: React.FC = () => {
-  // const [planMonthly, setPlan] = useState<boolean>(false);
-  const isDarkMode = document.documentElement.classList.contains('dark');
+  const [planMonthly, setPlan] = useState<boolean>(false);
   return (
     <>
-      <div className=" dark:bg-dark-bg dark:text-white" >
-        <section
-          className="h-[800px]  md:h-[700px] relative bg-cover  bg-center"
-          style={{  backgroundImage: `url(${isDarkMode ? landingbgDark : landingbg})`, }}
-        >
-          <LandingNavbar />
+      <div className=" dark:bg-dark-bg dark:text-white">
+      <section className="h-[800px]  md:h-[700px] bg-center inset-0 w-full dark:bg-blue-900 dark:bg-[radial-gradient(transparent_1px,#171717_1px)] bg-[radial-gradient(transparent_1px,#eff6ff_1px)] bg-blue-300 [background-size:24px_24px]">
+      <LandingNavbar />
           <div className=" h-5/6  flex flex-col md:flex-row ">
             <div className="  h-[70%] flex flex-col md:w-[60%] md:h-full justify-center items-center md:mt-9 gap-2 p-3">
               <div className="md:w-[80%]  h-[70%] flex flex-col justify-center xl:p-10 p-4 gap-4">
-                <h1 className="text-4xl md:text-5xl xl:text-6xl font-extrabold">
-                  Boost productivity and collaborate effortlessly with your
+                <h1 className="text-3xl md:text-5xl xl:text-6xl font-extrabold">
+                  Boost your <span className="text-blue-500">productivity</span> and <span className="text-blue-500">collaborate</span> effortlessly with your
                   team.
                 </h1>
                 <p className="font-medium text-sm text-gray-500 md:w-[60%] mb-5 mt-4">
@@ -37,8 +32,8 @@ const Landing: React.FC = () => {
                   exceeded.
                 </p>
                 <Link to="/signup">
-                  <button className="bg-blue-600 text-slate-50 rounded-md  px-3 py-2 font-semibold">
-                    Sign up for Free...
+                  <button className="bg-blue-500 gap-3 flex text-slate-50 rounded-md  px-2 py-2 font-semibold">
+                    Sign up for Free     <ChevronRight />
                   </button>
                 </Link>
               </div>
@@ -52,11 +47,11 @@ const Landing: React.FC = () => {
             </div>
           </div>
         </section>
-        <section className="h-[800px]  md:h-[700px] flex items-center ">
+        <section className="h-[800px] md:h-[600px] flex items-center  bg-blue-50 dark:bg-dark-bg">
           <div className=" h-5/6  flex flex-col md:flex-row items-center">
             <div className="  h-[70%] flex flex-col md:w-[60%] md:h-full justify-center items-center md:mt-9 gap-2 p-3">
               <div className=" md:w-[80%]  h-[70%] flex flex-col justify-center xl:p-10 p-4 gap-4">
-                <h1 className="text-4xl md:text-5xl xl:text-6xl font-extrabold">
+                <h1 className="text-3xl md:text-5xl xl:text-6xl font-extrabold">
                   Organize remote team fast & easily.
                 </h1>
                 <div className="">
@@ -105,24 +100,26 @@ const Landing: React.FC = () => {
                 </div>
               </div>
               <div className="w-full md:w-[95%] lg:w-[70%] h-5/6  md:flex md:justify-center md:items-center ">
-                <div className="w-full h-2/6  md:h-5/6  p-3 ">
+                <div className="w-full h-2/6 flex flex-col justify-center items-center    md:h-5/6  p-3 ">
                   <h1 className="font-semibold text-lg mb-3">
-                    Comprehensive Service Offerings
+                    Comprehensive Services
                   </h1>
                   <div
                     className="w-[90%] h-[200px] shadow-2xl bg-cover rounded-lg"
                     style={{ backgroundImage: `url(${serviceOffertingImage})` }}
                   ></div>
-                  <p className="font-semibold mb text-sm text-gray-500 p-3">
+                  <p className="font-semibold mb text-sm text-center text-gray-500 p-3">
                     By using the various services provided by Thrive, you can
                     collaborate more effectively and increase the productivity
                     of your work.
                   </p>
-                  <p className="text-blue-600 text-sm pl-3 font-semibold">
+                  <Link to="/signup">
+                  <p className="text-blue-400 text-sm  font-semibold">
                     Learn more -
                   </p>
+                  </Link>
                 </div>
-                <div className="w-full h-2/6  md:h-5/6  p-3">
+                <div className="w-full h-2/6  md:h-5/6 flex flex-col justify-center items-center p-3">
                   <h1 className="font-semibold text-lg mb-3">
                     Effortless Collaboration
                   </h1>
@@ -130,15 +127,17 @@ const Landing: React.FC = () => {
                     className="w-[90%] h-[200px] shadow-2xl bg-cover rounded-lg"
                     style={{ backgroundImage: `url(${collaborationImage})` }}
                   ></div>
-                  <p className="font-semibold  text-sm text-gray-500 p-3">
+                  <p className="font-semibold  text-sm text-center text-gray-500 p-3">
                     Innovative solutions drive progress, offering new and
                     effective ways to solve problems and enhance efficiency.
                   </p>
-                  <p className="text-blue-600 text-sm pl-3 font-semibold">
+                  <Link to="/signup">
+                  <p className="text-blue-400 text-sm  font-semibold">
                     Learn more -
                   </p>
+                  </Link>
                 </div>
-                <div className="w-full h-2/6  md:h-5/6  p-3">
+                <div className="w-full h-2/6  flex flex-col justify-center items-center  md:h-5/6  p-3">
                   <h1 className="font-semibold text-lg mb-3">
                     Innovative Solutions
                   </h1>
@@ -146,24 +145,26 @@ const Landing: React.FC = () => {
                     className="w-[90%] h-[200px] shadow-2xl bg-cover rounded-lg"
                     style={{ backgroundImage: `url(${productivityImage})` }}
                   ></div>
-                  <p className="font-semibold  text-sm text-gray-500 p-3">
+                  <p className="font-semibold text-center text-sm text-gray-500 p-3">
                     Effortless collaboration is achieved through streamlined
-                    communication and integrated tools, allowing teams to work
+                    communication, allowing teams to work
                     together seamlessly and efficiently.
                   </p>
-                  <p className="text-blue-600 text-sm pl-3 font-semibold">
+                  <Link to="/signup">
+                  <p className="text-blue-400 text-sm font-semibold">
                     Learn more -
                   </p>
+                  </Link>
                 </div>
               </div>
             </div>
           </div>
         </section>
-        <section className="h-[800px]  md:h-[700px] flex items-center">
-          <div className=" h-5/6  flex flex-col md:flex-row items-center">
+        <section className="h-[800px] bg-blue-50 dark:bg-dark-bg  md:h-[700px] flex items-center">
+          <div className=" h-5/6 gap-3 flex flex-col md:flex-row items-center">
             <div className=" h-[50%] flex justify-center md:w-[50%] md:h-full items-center p-9">
               <img
-                className="w-[300px] md:w-[450px] md:ml-36 lg:ml-56"
+                className="w-[300px] md:w-[450px] rounded-full md:ml-36 lg:ml-56"
                 src={dashboardImage}
                 alt=""
               />
@@ -171,24 +172,27 @@ const Landing: React.FC = () => {
             <div className="  h-[70%] flex flex-col md:w-[60%] md:h-full justify-center items-center md:mt-9 gap-2 p-3">
               <div className=" md:w-[80%]  h-[70%] flex flex-col justify-center xl:p-10 p-4 gap-4">
                 <h1 className="text-4xl md:text-5xl xl:text-6xl font-extrabold">
-                  Track your progress with our advanced site.
+                  Track your <span className="text-blue-500">progress</span> with our advanced site.
                 </h1>
                 <div className="">
-                  <p className="font-medium text-sm text-gray-500 md:w-[50%] mb-5 mt-4">
+                  <p className="font-medium text-sm text-gray-500 md:w-[80%] mb-5 mt-4">
                     Track your progress with our advanced site, ensuring you
                     stay on top of your goals and milestones. Our intuitive
                     dashboard provides real-time updates and insights, making it
                     easier than ever to monitor your achievements.
                   </p>
-                  <p className="text-blue-600 text-md md:text-lg pl-3 font-semibold">
-                    Start free trial -
-                  </p>
+                  <Link to="/signup">
+                  <button className="bg-blue-500 gap-3 flex text-slate-50 rounded-md  px-2 py-2 font-semibold">
+                    Sign up for Free     <ChevronRight />
+                  </button>
+                </Link>
                 </div>
               </div>
             </div>
           </div>
         </section>
-        <section className=" h-[700px]  md:h-[300px] flex items-center dark:bg-neutral-900  bg-blue-50 justify-center">
+    
+        <section className=" h-[700px]  md:h-[300px] flex items-center dark:bg-neutral-900  bg-blue-50 justify-center" style={{ backgroundImage: 'linear-gradient(120deg, #a1c4fd 50%, #c2e9fb 50%)' }} >
           <div className="w-[90%] md:w-[95%] lg:w-[70%] h-5/6 flex flex-col  md:flex md:flex-row md:justify-center md:items-center gap-8">
             <div className="w-full  h-2/6  md:h-5/6  p-3  flex flex-col justify-center items-center ">
               <h1 className="text-4xl md:text-5xl xl:text-5xl font-bold text-center  ">
@@ -216,7 +220,7 @@ const Landing: React.FC = () => {
             </div>
           </div>
         </section>
-        {/* <section className="h-full md:h-[900px] flex flex-col justify-center items-center">
+        <section className="h-full bg-blue-50 dark:bg-dark-bg md:h-[900px] flex flex-col justify-center items-center">
           <div className="h-[300px]  w-full flex flex-col justify-center items-center">
             <h1 className="text-3xl md:text-3xl xl:text-4xl font-bold text-center">
               Choose Plan That's Right For You
@@ -244,7 +248,7 @@ const Landing: React.FC = () => {
             </div>
           </div>
           <div className="w-[90%] md:w-[95%] md:h-[600px] lg:w-[70%] h-[1200px] lg:px-24 flex flex-col  md:flex md:flex-row md:justify-center md:items-center gap-8">
-            <div className="  w-full rounded-lg  md:w-2/6 shadow-[rgba(17,_17,_26,_0.1)_0px_0px_16px] h-1/3  md:h-5/6  p-3  flex flex-col justify-center items-center ">
+            <div className="  w-full rounded-lg  md:w-3/6 shadow-[rgba(17,_17,_26,_0.1)_0px_0px_16px] h-1/3  md:h-5/6  p-3  flex flex-col justify-center items-center ">
                <div className="h-">
 
                </div>
@@ -252,14 +256,11 @@ const Landing: React.FC = () => {
 
                </div>
             </div>
-            <div className="  w-full rounded-lg  md:w-2/6 shadow-[rgba(17,_17,_26,_0.1)_0px_0px_16px] h-1/3  md:h-5/6  p-3 flex flex-col justify-center items-center ">
+            <div className="  w-full rounded-lg  md:w-3/6 shadow-[rgba(17,_17,_26,_0.1)_0px_0px_16px] h-1/3  md:h-5/6  p-3 flex flex-col justify-center items-center ">
              
             </div>
-            <div className=" w-full rounded-lg   md:w-2/6 shadow-[rgba(17,_17,_26,_0.1)_0px_0px_16px] h-1/3  md:h-5/6  p-3 flex flex-col justify-center items-center ">
-              
-            </div>
           </div>
-        </section> */}
+        </section>
 
         <Footer />
       </div>

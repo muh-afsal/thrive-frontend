@@ -60,14 +60,12 @@ const Dashboard: React.FC = () => {
           return eventDate >= today;
         });
 
-        // Sort events by date and start time
         validEvents.sort((a: { date: string | number | Date; startTime: string; }, b: { date: string | number | Date; startTime: string; }) => {
           const dateA = new Date(a.date).getTime();
           const dateB = new Date(b.date).getTime();
           const timeA = a.startTime.split(":").map(Number).reduce((acc: number, time: number) => acc * 60 + time);
           const timeB = b.startTime.split(":").map(Number).reduce((acc: number, time: number) => acc * 60 + time);
           
-          // First compare by date, then by start time
           return dateA - dateB || timeA - timeB;
         });
 
@@ -91,13 +89,13 @@ const Dashboard: React.FC = () => {
           <NavSidebar />
         </div>
         <div className="w-full h-full">
-          <div className={`relative z-10 dark:bg-neutral-900 pl-0 ${isSidebarOpen && "pl-12"}`}>
+          <div className={`relative z-10 dark:bg-neutral-900 pl-0 ${isSidebarOpen && "pl-"}`}>
             <CategoryNavbar toggleSidebar={toggleSidebar} categoryName={"Dashboard"} />
           </div>
           <div className="relative bg--500 h-[92.3vh] flex">
             <div className="bg--500 w-full lg:w-9/12 h-full">
               <div className="h-[30%] bg--300 py-4 px-3">
-                <div className="bg-gradient from-blue-200 to-cyan-200 bg-blue-200 dark:bg-blue-500 dark:to-slate-700 dark:border dark:border-neutral-800 shadow-[inset_0px_0px_7px_0px_#D3D3D3] dark:shadow-none text-black w-full h-full rounded-xl relative">
+                <div className="bg-gradient from-blue-200 to-cyan-200 bg-blue-200 dark:bg-sky-700 dark:to-slate-700 dark:border dark:border-neutral-800 shadow-[inset_0px_0px_7px_0px_#D3D3D3] dark:shadow-none text-black w-full h-full rounded-xl relative">
                   <div className="flex flex-col gap-5 pt-10 pl-6">
                     <h1 className="font-bold text-2xl md:text-3xl dark:text-white">
                       Your Teammates are online..
@@ -156,7 +154,7 @@ const Dashboard: React.FC = () => {
                       </div>
                     </div>
                     <div className="h-[50%] w-full rounded-lg dark:border dark:border-neutral-800 shadow-[inset_0px_0px_7px_0px_#D3D3D3] dark:shadow-[inset_0px_0px_7px_0px_#000000]">
-                      <h1 className="font-semibold text-lg p-4 dark:text-neutral-50 ">Pending Notifications</h1>
+                      <h1 className="font-semibold text-lg p-4 dark:text-neutral-50 ">Notifications</h1>
                     </div>
                   </div>
                 </div>

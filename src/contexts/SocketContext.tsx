@@ -77,9 +77,9 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({
         setSocket(newSocket);
       });
 
-      newSocket.on("room-created", ({ roomId }) => {
-        navigate(`/call-room/${roomId}`);
-      });
+      // newSocket.on("room-created", ({ roomId }) => {
+      //   navigate(`/call-room/${roomId}`);
+      // });
 
       newSocket.on("disconnect", () => {
         setSocket(null);
@@ -107,3 +107,4 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({
     <SocketContext.Provider value={value}>{children}</SocketContext.Provider>
   );
 }; 
+

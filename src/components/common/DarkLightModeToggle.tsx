@@ -18,7 +18,7 @@ const ThemeToggle: React.FC = () => {
   };
 
   return (
-    <div className="flex items-center space-x-2 mr-5">
+    <div className="flex items-center space-x-2  mr-[-10px] md:mr-3">
       <button
         onClick={toggleTheme}
         className="relative w-9 h-9 rounded-lg flex items-center justify-center transition-colors duration-300 focus:outline-none"
