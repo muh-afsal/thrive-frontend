@@ -9,7 +9,7 @@ import { IoMdArrowBack } from "react-icons/io";
 import { CalendarClock, ClipboardCheck, Plus } from "lucide-react";
 import { RootState } from "@/redux/store";
 import { useSelector } from "react-redux";
-import { useSocket } from "@/contexts/SocketContext";
+// import { useSocket } from "@/contexts/SocketContext";
 
 interface EventData {
   _id: string;
@@ -31,10 +31,10 @@ const EventDash: React.FC = () => {
 
   const currentUserId = data?._id;
 
-  const { notificationSocketService } = useSocket();
-  const h = 5;
+  // const { notificationSocketService } = useSocket();
+  // const h = 5;
 
-  notificationSocketService?.emit("text", { h });
+  // notificationSocketService?.emit("text", { h });
 
   const eventColors = useRef<Record<string, string>>({});
 
