@@ -58,8 +58,10 @@ const ChatPage: React.FC = () => {
     null
   );
   const [showRecordingPopup, setShowRecordingPopup] = useState(false);
+  const [refresh, setRefresh] = useState<boolean>(false);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const [chatData, setChatData] = useState([]);
+  
   // const participantsArray = chatData.map(chat => chat.participants);
   // console.log(chatData,'mmmmmmmmmmmmmmmmmmmmmmmmmmmm');
 
@@ -71,6 +73,7 @@ const ChatPage: React.FC = () => {
     string | null
   >(null);
   const [chatMessages, setChatMessages] = useState<IMessage[]>([]);
+  
   const [typing, setTyping] = useState(false);
   const { socket } = useSocket();
   // const socket=mediaSocketService;
@@ -83,6 +86,8 @@ const ChatPage: React.FC = () => {
 
   const currentUser = data;
   const currentUserId = currentUser?._id;
+  
+
 
   useEffect(() => {
     const timeoutId = setTimeout(() => {
@@ -109,8 +114,8 @@ const ChatPage: React.FC = () => {
   useEffect(() => {
     if (socket) {
       const handleReceiveMessage = (message: IMessage) => {
-        console.log(message, "00000000000000000000");
         setChatMessages((prevMessages) => [...prevMessages, message]);
+        setRefresh(prev => !prev);
       };
       socket.on("receiveMessage", handleReceiveMessage);
 
@@ -159,7 +164,7 @@ const ChatPage: React.FC = () => {
       try {
         const response = await CLIENT_API.get(`/media/get-all-chats/${currentUserId}`, config);
         const allchatData = response.data.chats;
-
+        
         setChatData(allchatData);
       } catch (error) {
         console.error("Error fetching users", error);
@@ -168,7 +173,7 @@ const ChatPage: React.FC = () => {
     };
 
     fetchAllChats();
-  }, [newChatAdded]);
+  }, [newChatAdded,refresh]);
 
   useEffect(() => {
     const fetchAllChatMessages = async () => {
@@ -250,6 +255,7 @@ const ChatPage: React.FC = () => {
           setAudioBlob(null);
           setShowPicker(false);
           setUploadedFileUrls([]);
+          setRefresh(prev => !prev);
         }
       } catch (error) {
         console.log(error);
@@ -472,7 +478,8 @@ const ChatPage: React.FC = () => {
 
   const renderChatHeader = () => {
     return (
-      <div className="h-[9%] bg--400 flex border-b border-gray-200 dark:border-neutral-700">
+      
+      <div className="h-[9%] bg--400 flex border-b border-neutral-300 dark:border-neutral-700">
         <div className="w-[70px] bg--500 h-full flex justify-center items-center ">
           <img
             src={selectedChatprofileImage || undefined}
@@ -501,82 +508,89 @@ const ChatPage: React.FC = () => {
   };
 
   const renderContacts = () => {
-    const contacts = chatData;
+    const contacts: Chat[] = chatData; 
+
+     contacts.sort((a, b) => 
+        new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
+    );
+  
     const contactsAvailable = contacts.length > 0;
-  
+
     if (chatType === "all-inbox" || chatType === "groups") {
-      if (contactsAvailable) {
-        return (
-          <>
-            {contacts.map((chat: Chat) => {
-              const otherParticipant = chat.participants.find(
-                (participant) => participant._id !== currentUserId
-              );
-  
-              return (
-                <div
-                  key={chat._id}
-                  onClick={() => handleChatOpen(chat._id, chat)}
-                >
-                  <UserContact
-                    profileImage={
-                      chat.isGroupChat
-                        ? chat.groupIcon
-                        : otherParticipant?.profileImage ||
-                          "https://res.cloudinary.com/djo6yu43t/image/upload/v1725124534/IMG_20240831_224439_v7rnsg.jpg"
-                    }
-                    fullName={
-                      chat.isGroupChat
-                        ? chat.name
-                        : `${otherParticipant?.firstname ?? ''} ${otherParticipant?.lastname ?? ''}`
-                    }
-                    lastMessage={
-                      chat.lastMessage ? chat.lastMessage : "No messages yet"
-                    }
-                  />
+        if (contactsAvailable) {
+            return (
+                <>
+                    {contacts.map((chat: Chat) => {
+                        const otherParticipant = chat.participants.find(
+                            (participant) => participant._id !== currentUserId
+                        );
+
+                        return (
+                            <div
+                                key={chat._id}
+                                onClick={() => handleChatOpen(chat._id, chat)}
+                            >
+                                <UserContact
+                                    profileImage={
+                                        chat.isGroupChat
+                                            ? chat.groupIcon
+                                            : otherParticipant?.profileImage ||
+                                              "https://res.cloudinary.com/djo6yu43t/image/upload/v1725124534/IMG_20240831_224439_v7rnsg.jpg"
+                                    }
+                                    fullName={
+                                        chat.isGroupChat
+                                            ? chat.name
+                                            : `${otherParticipant?.firstname ?? ''} ${otherParticipant?.lastname ?? ''}`
+                                    }
+                                    lastMessage={
+                                        chat.lastMessage ? chat.lastMessage.content : "No messages yet"
+                                    }
+                                />
+                            </div>
+                        );
+                    })}
+                </>
+            );
+        } else {
+            return (
+                <div className="flex justify-center items-center h-full">
+                    <p className="py-1 bg-slate-200 rounded-lg px-4 dark:bg-neutral-800 dark:text-white shadow-[0px_2px_3px_-1px_rgba(0,0,0,0.1),0px_1px_0px_0px_rgba(25,28,33,0.02),0px_0px_0px_1px_rgba(25,28,33,0.08)]">
+                        No recent chat,{" "}
+                        <button className="text-blue-500" onClick={handleOpenModal}>
+                            create a new chat.
+                        </button>
+                    </p>
                 </div>
-              );
-            })}
-          </>
-        );
-      } else {
-        return (
-          <div className="flex justify-center items-center h-full">
-            <p className="py-1 bg-slate-200 rounded-lg px-4 dark:bg-neutral-800 dark:text-white  shadow-[0px_2px_3px_-1px_rgba(0,0,0,0.1),0px_1px_0px_0px_rgba(25,28,33,0.02),0px_0px_0px_1px_rgba(25,28,33,0.08)]">
-              No recent chat,{" "}
-              <button className="text-blue-500 " onClick={handleOpenModal}>
-                create a new chat.
-              </button>
-            </p>
-          </div>
-        );
-      }
+            );
+        }
     }
-  };
+};
+
   
   
 
   return (
     <div className="dark:bg-neutral-900 w-full  flex h-[100%] relative">
-      <div className="  contacts-listing scrollbar-custom bg--300  w-[35%] mt-4 border-r border-gray-100 dark:border-neutral-700 overflow-y-auto flex flex-col">
-        <div className=" border-b  border-gray-200 dark:border-neutral-700">
-          <ContactSearchBar />
-          <div
-            onClick={handleOpenModal}
-            className="bg--400 flex justify-end items-center px-6 pt-2 pb-2 relative group"
-          >
-            <FiEdit
-              className="cursor-pointer hover:text-thrive-blue dark:text-neutral-500"
-              size={20}
-            />
-            <span className="tooltip opacity-0 group-hover:opacity-100 transition-opacity duration-200 absolute bg-gray-500 text-white text-xs rounded py- 1 px-2 bottom-full ">
-              Add chat
-            </span>
+   
+        <div className="contacts-listing scrollbar-custom bg--300 w-[35%] pt-4 border-r border-neutral-300 dark:border-neutral-700 overflow-y-auto flex flex-col transition-transform duration-300">
+          <div className="border-b border-neutral-300 dark:border-neutral-700">
+            <ContactSearchBar />
+            <div
+              onClick={handleOpenModal}
+              className="bg--400 flex justify-end items-center px-6 pt-2 pb-2 relative group"
+            >
+              <FiEdit
+                className="cursor-pointer hover:text-thrive-blue dark:text-neutral-500"
+                size={20}
+              />
+              <span className="tooltip opacity-0 group-hover:opacity-100 transition-opacity duration-200 absolute bg-gray-500 text-white text-xs rounded py-1 px-2 bottom-full ">
+                Add chat
+              </span>
+            </div>
           </div>
+          {renderContacts()}
         </div>
-
-        {renderContacts()}
-      </div>
+      
 
       <div
         className={`fixed inset-0 z-50 ${
@@ -592,7 +606,7 @@ const ChatPage: React.FC = () => {
         </div>
       </div>
       {isChatOpen ? (
-        <div className="chat-listing  w-[100%] lg:w-[65%] relative flex flex-col">
+        <div className="chat-listing   w-[100%] lg:w-[65%] relative flex flex-col">
           {renderChatHeader()}
 
           <div className="chat-listing bg--400 h-[87%] w-full scrollbar-custom">
@@ -614,6 +628,7 @@ const ChatPage: React.FC = () => {
                         key={message._id}
                         isSender={isSender}
                         message={message}
+                        sender={message.sender.firstname + message.sender.lastname}
                         // isgroup={chatData.i}
                       />
                     );
@@ -669,7 +684,7 @@ const ChatPage: React.FC = () => {
           </div>
           <form
             onSubmit={handleSendMessage}
-            className="chat-input bg-white dark:bg-dark-bg h-[7%] w-[100%] bottom-0 absolute flex border-t border-gray-200 dark:border-neutral-700"
+            className="chat-input bg-white dark:bg-dark-bg h-[7%] w-[100%] bottom-0 absolute flex border-t border-gray-300 dark:border-neutral-700"
           >
             {/* Attachments and Inputs */}
             <div className="bg--400 h-full w-[7%] flex justify-center items-center">

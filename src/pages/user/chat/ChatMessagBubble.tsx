@@ -9,17 +9,18 @@ import { toast } from 'react-toastify';
 interface ChatMessageBubbleProps {
   isSender: boolean;
   message: IMessage;
+  sender:string;
 }
 
 export const ChatMessageBubble: React.FC<ChatMessageBubbleProps> = ({
   isSender,
   message,
+  sender
 }) => {
   const [isMoreOption, setIsMoreOptions] = useState(false);
   const [isDropdownVisible, setIsDropdownVisible] = useState(false);
   const dropdownRef = useRef<HTMLDivElement | null>(null);
   const [isModalOpen, setIsModalOpen] = React.useState(false);
-
 
 // General API call function with action parameter
 const handleAction = async (action: "copy" | "star" | "delete") => {
@@ -165,8 +166,11 @@ const handleAction = async (action: "copy" | "star" | "delete") => {
   };
 
   return (
-    <div className={`flex ${isSender ? "justify-end" : "justify-start"} mb-3`}>
-      <div className="relative">
+    
+   
+    
+    <div className={`flex ${isSender ? "justify-end" : "justify-start"} mb-3 `}>
+      <div className="relative  flex flex-col">
       {(isMoreOption || isDropdownVisible) && (
           <div
             className={`absolute z-50 ${
@@ -231,7 +235,7 @@ const handleAction = async (action: "copy" | "star" | "delete") => {
         className="bg--500 flex justify-center"
       >
         <div
-          className={`px-1 py-1 max-w-xs relative flex flex-row ${
+          className={`px-1 py-1 max-w-xs relative  flex flex-row ${
             isSender ? "order-1" : "order-2"
           } ${
             isSender
@@ -239,6 +243,7 @@ const handleAction = async (action: "copy" | "star" | "delete") => {
               : "bg-gray-300 dark:bg-neutral-800 dark:text-white text-gray-800 rounded-br-lg rounded-tr-lg rounded-tl-lg"
           }`}
         >
+         
           {message.attachments.length > 0 ? (
             <div className="flex flex-col relative">
               {message.attachments.map((attachment, index) => (
@@ -255,6 +260,7 @@ const handleAction = async (action: "copy" | "star" | "delete") => {
           ) : (
             <div className="flex flex-row">
               <div className={`text-sm px-3 rounded-full mr-9`}>
+              <p className={` text-[12px] ${isSender ? "justify-end text-blue-900" : "justify-start dark:text-neutral-400 text-neutral-500"} flex w-max"`}> {sender}</p>
                 {message.content}
               </div>
             </div>

@@ -33,8 +33,8 @@ const Sidebar: React.FC<SidebarProps> = ({ items }) => {
   }, []);
 
   return (
-    <div className='w-[300px] h-full border-r border-gray-200 dark:border-neutral-700 flex flex-col justify-center dark:bg-dark-bg bg-white'>
-      <div className='h-[230px] border-b border-gray-200 dark:border-neutral-700 mb-10 flex flex-col justify-center items-center'>
+    <div className='w-[300px] h-full border-r border-neutral-300 dark:border-neutral-700 flex flex-col justify-center dark:bg-dark-bg bg-white'>
+      <div className='h-[230px] border-b border-neutral-300 dark:border-neutral-700 mb-10 flex flex-col justify-center items-center'>
         <div className='w-[110px] h-[110px] overflow-hidden bg-red-300 rounded-2xl profilepic shadow-lg'>
           <img className='object-cover w-full h-full' src={profileImage} alt="Profile" />
         </div>

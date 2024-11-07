@@ -1,21 +1,60 @@
-import React, { useRef, useEffect, useState } from 'react';
-import { MdMoreVert } from 'react-icons/md';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { useSocket } from "@/contexts/SocketContext";
+import { RootState } from "@/redux/store";
+import React, { useRef, useEffect, useState } from "react";
+import { MdMoreVert } from "react-icons/md";
+import { useSelector } from "react-redux";
 
 interface MediaStreamDisplayProps {
   stream: MediaStream | null;
   profilePicture?: string;
   userName?: string;
-  onRemoveUser?: () => void; // Function to handle user removal
+  userId: any | undefined;
+  roomId: string | undefined;
+  removeRemoteStream?: (userId: any) => void;
+  endcall?: () => void;
 }
 
 const MediaStreamDisplay: React.FC<MediaStreamDisplayProps> = ({
   stream,
   profilePicture,
   userName,
-  onRemoveUser,
+  userId,
+  roomId,
+  removeRemoteStream,
+  endcall
 }) => {
+  
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isDropdownVisible, setIsDropdownVisible] = useState(false);
+  // const [host, setHost] = useState<string | null>(null);
+  const hostRef = useRef<string | null>(null);
+  console.log(hostRef.current,'lllllllllllllllllllllllll');
+  
+
+  const { socket } = useSocket();
+  const { data } = useSelector((state: RootState) => state.user);
+  const currentUserId = data?._id;
+
+  useEffect(() => {
+    socket?.on("host-users", ({ host }) => {
+      if (!hostRef.current) {
+        hostRef.current = host;
+      } 
+    });
+    socket?.on("user-removed", () => {
+      endcall?.(); 
+    });
+    socket?.on("user-removed-from-room", ({ userId }) => {
+      removeRemoteStream?.(userId); 
+    });
+
+    return () => {
+      socket?.off("host-users");
+      socket?.off("user-removed");
+      socket?.off("user-removed-from-room");
+    };
+  }, [socket]);
 
   useEffect(() => {
     const videoElement = videoRef.current;
@@ -31,6 +70,14 @@ const MediaStreamDisplay: React.FC<MediaStreamDisplayProps> = ({
 
   const toggleDropdown = () => {
     setIsDropdownVisible(!isDropdownVisible);
+  };
+
+  const handleRemoveUser = () => {
+    setIsDropdownVisible(false);
+    socket?.emit("remove-user", {
+      roomId: roomId,
+      userIdToRemove: userId,
+    });
   };
 
   if (!stream) {
@@ -52,47 +99,68 @@ const MediaStreamDisplay: React.FC<MediaStreamDisplayProps> = ({
     );
   }
 
-  return (
-    <div className="w-full h-full relative flex justify-center items-center">
-      {/* Video stream */}
-      <video
-        className="bg-neutral-700 rounded-lg h-full"
-        ref={videoRef}
-        autoPlay
-        playsInline
-        muted
-        style={{
-          maxWidth: '100%',
-          maxHeight: '100%',
-          objectFit: 'contain',
-          transform: "scaleX(-1)",
-        }}
-      />
-      
-      <div className="absolute top-2 right-2">
-        <div onClick={toggleDropdown} className="cursor-pointer">
-          <MdMoreVert size={24} className="text-white" />
-        </div>
-        {isDropdownVisible && (
-          <div className="absolute right-0 mt-2 w-40 bg-white divide-y divide-gray-100 rounded-lg shadow-lg dark:bg-neutral-700">
-            <ul className="py-2 text-sm text-gray-700 dark:text-gray-200">
-              <li>
+  const renderRemoteUser = () => {
+    return (
+      <div className="w-full h-full relative flex justify-center items-center">
+        <video
+          className="bg-neutral-700 rounded-lg h-full"
+          ref={videoRef}
+          autoPlay
+          playsInline
+          muted
+          style={{
+            maxWidth: "100%",
+            maxHeight: "100%",
+            objectFit: "contain",
+            transform: "scaleX(-1)",
+          }}
+        />
+        {/* {hostRef.current === currentUserId && ( */}
+          <div className="absolute top-2 right-2">
+            <div onClick={toggleDropdown} className="cursor-pointer">
+              <MdMoreVert size={24} className="text-white" />
+            </div>
+            {isDropdownVisible && (
+              <div className="absolute top-10 right-0 bg-neutral-800 text-white py-1 w-40 rounded-lg shadow-lg z-10">
                 <button
-                  className="block w-full text-left px-4 py-2 hover:bg-neutral-100 dark:hover:bg-neutral-600 dark:hover:text-white"
-                  onClick={() => {
-                    setIsDropdownVisible(false);
-                    if (onRemoveUser) onRemoveUser();
-                  }}
+                  className="w-full px-4 py-2 text-left text-white hover:bg-neutral-700"
+                  onClick={handleRemoveUser}
                 >
                   Remove User
                 </button>
-              </li>
-            </ul>
+              </div>
+            )}
           </div>
-        )}
+        {/* )} */}
       </div>
-    </div>
-  );
+    );
+  };
+
+  const renderCurrentUserStream = () => {
+    return (
+      <div className="w-full h-full relative flex justify-center items-center">
+        <video
+          className="bg-neutral-700 rounded-lg h-full"
+          ref={videoRef}
+          autoPlay
+          playsInline
+          muted
+          style={{
+            maxWidth: "100%",
+            maxHeight: "100%",
+            objectFit: "contain",
+            transform: "scaleX(-1)", 
+          }}
+        />
+      </div>
+    );
+  };
+
+  if (userId !== currentUserId) {
+    return renderRemoteUser();
+  }
+
+  return renderCurrentUserStream();
 };
 
-export default React.memo(MediaStreamDisplay);
+export default MediaStreamDisplay;

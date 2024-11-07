@@ -4,6 +4,7 @@ export default {
   content: [
     "./src/**/*.{js,jsx,ts,tsx}",
   ],
+  // #1A1A1A
   theme: {
     extend: {
       colors: {
@@ -16,11 +17,11 @@ export default {
       },
       scrollbar: {
         DEFAULT: {
-          thumb: 'rgb(245, 245, 245)', // Even more transparent
+          thumb: 'rgb(245, 245, 245)',
           track: 'transparent',
         },
         dark: {
-          thumb: 'rgba(74, 85, 104, 0.3)', // More transparent dark mode thumb
+          thumb: 'rgba(74, 85, 104, 0.3)', 
           track: 'transparent',
         }
       }
@@ -31,23 +32,23 @@ export default {
       const newComponents = {
         '.scrollbar-custom': {
           position: 'relative',
-          overflowY: 'auto', // Enable scrolling
-          scrollbarWidth: '5px',  // Hide scrollbar for Firefox
-          '-ms-overflow-style': '10x', // Hide scrollbar for IE and Edge
+          overflowY: 'auto', 
+          scrollbarWidth: '5px',  
+          '-ms-overflow-style': '10x', 
 
           '&::-webkit-scrollbar': {
             width: '5px', 
-            height: '5px', // Hide scrollbar for Chrome, Safari, etc.
+            height: '5px', 
           },
           
           '&:hover::-webkit-scrollbar': {
             width: '5px', 
-            height: '5px',// Show scrollbar on hover
+            height: '5px',
           },
           
           '&::-webkit-scrollbar-thumb': {
             backgroundColor: theme('scrollbar.DEFAULT.thumb'),
-            borderRadius: '9999px', // Fully rounded
+            borderRadius: '9999px', 
           },
 
           '&::-webkit-scrollbar-track': {
@@ -65,7 +66,7 @@ export default {
           
           '.dark &:hover::-webkit-scrollbar': {
             width: '5px',
-            height: '5px',  // Show scrollbar on hover in dark mode
+            height: '5px', 
           },
           
         },

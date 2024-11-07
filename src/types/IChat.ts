@@ -16,8 +16,9 @@ export type Participant = {
     name: string;
     isGroupChat: boolean;
     groupIcon:string;
-    lastMessage: string | null;
+    lastMessage: any | null;
     participants: Participant[];
+      updatedAt: string;
   };
   
 

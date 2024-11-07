@@ -50,7 +50,7 @@ const NavSidebar: React.FC = () => {
   return (
     <div className="dark:bg-dark-bg w-16 h-screen flex flex-col justify-center items-center shadow-[rgba(50,_50,_105,_0.15)_0px_2px_5px_0px,_rgba(0,_0,_0,_0.05)_0px_1px_1px_0px]">
       <div className="h-[10%] w-14 flex flex-col justify-center items-center">
-        <Link to="/">
+        <Link to="/home">
           <div
             className="w-11 h-11 bg-contain hover:cursor-pointer"
             style={{ backgroundImage: `url(${logo})` }}

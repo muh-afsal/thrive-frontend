@@ -17,6 +17,10 @@ import { config } from "@/common/configuratoins";
 
 
 
+interface MediaStreamWithUserId extends MediaStream {
+  userId: string;
+}
+
 
 
 const CallRoomPage: React.FC = () => {
@@ -25,11 +29,10 @@ const CallRoomPage: React.FC = () => {
   const { data } = useSelector((state: RootState) => state.user);
   const myPeerRef = useRef<Peer | null>(null);
   const [stream, setStream] = useState<MediaStream | null>(null);
-  const [isVideoOn, setIsVideoOn] = useState(true);
   const [isAudioOn, setIsAudioOn] = useState(true);
-  const [remoteStreams, setRemoteStreams] = useState<
-    Record<string, MediaStream>
-  >({});
+  const [remoteStreams, setRemoteStreams] = useState<Record<string, MediaStreamWithUserId>>({});
+  const callType = sessionStorage.getItem(`callType_${roomId}`);
+  const [isVideoOn, setIsVideoOn] = useState(callType === "video");
   const [callEnded, setCallEnded] = useState(false);
   const navigate = useNavigate();
   const [isDropdownVisible, setIsDropdownVisible] = useState(false);
@@ -40,14 +43,16 @@ const CallRoomPage: React.FC = () => {
   const lastName = data?.lastname;
   const currentUserName = firstName + " " + lastName;
   const profilePicture = data?.profileImage;
+
+  
  
 
   useEffect(() => {
     const getMedia = async () => {
       try {
         const mediaStream = await navigator.mediaDevices.getUserMedia({
-          video: isVideoOn,
-          audio: true,
+          video: callType === "video" && isVideoOn,
+          audio: isAudioOn,
         });
         setStream(mediaStream);
       } catch (error) {
@@ -62,25 +67,25 @@ const CallRoomPage: React.FC = () => {
         stream.getTracks().forEach((track) => track.stop());
       }
     };
-  }, [isVideoOn, isAudioOn]);
-
+  }, [isVideoOn, isAudioOn, callType]);
+  
   useEffect(() => {
     if (!stream || !currentUserId) return; 
-
+  
     myPeerRef.current = new Peer(currentUserId);
-
+  
     myPeerRef.current.on("open", (id) => {
       console.log("User joined the peer with id:", id);
       socket?.emit("join-room", { roomId, userId: currentUserId });
     });
-
+  
     myPeerRef.current.on("call", (call) => {
       call.answer(stream);
       call.on("stream", (userVideoStream) => {
         addRemoteStream(call.peer, userVideoStream);
       });
     });
-
+  
     socket?.on("user-joined-room", (userId) => {
       if (!remoteStreams[userId]) {
         const call = myPeerRef.current?.call(userId, stream);
@@ -88,15 +93,14 @@ const CallRoomPage: React.FC = () => {
           call.on("stream", (userVideoStream) => {
             addRemoteStream(userId, userVideoStream);
           });
-
+  
           call.on("close", () => {
             removeRemoteStream(userId);
           });
         }
       }
     });
-
-    // sending our stream to every connected peer when a new user joins
+  
     socket?.on("existing-users", (users) => {
       users.forEach((userId: string) => {
         if (userId !== currentUserId && !remoteStreams[userId]) {
@@ -105,7 +109,7 @@ const CallRoomPage: React.FC = () => {
             call.on("stream", (userVideoStream) => {
               addRemoteStream(userId, userVideoStream);
             });
-
+  
             call.on("close", () => {
               removeRemoteStream(userId);
             });
@@ -113,33 +117,46 @@ const CallRoomPage: React.FC = () => {
         }
       });
     });
-
-    socket?.on("user-disconnected", (userId) => {
-      removeRemoteStream(userId);
+  
+    socket?.on("remove-user-stream", ({ userId }) => {
+      console.log(`Removing video stream for user ${userId}`);
+      removeRemoteStream(userId);  
     });
-
+  
     return () => {
       myPeerRef.current?.destroy();
       socket?.off("user-joined-room");
       socket?.off("user-disconnected");
       socket?.off("existing-users");
+      socket?.off("remove-user-stream"); 
     };
   }, [socket, roomId, currentUserId, stream]);
 
+
+
+
   const addRemoteStream = (userId: string, userVideoStream: MediaStream) => {
+    const streamWithUserId = Object.assign(userVideoStream, { userId });
+  
     setRemoteStreams((prevStreams) => ({
       ...prevStreams,
-      [userId]: userVideoStream,
+      [userId]: streamWithUserId, 
     }));
   };
-
+  
+  
   const removeRemoteStream = (userId: string) => {
     setRemoteStreams((prevStreams) => {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { [userId]: _, ...rest } = prevStreams;
+      const userStream = prevStreams[userId];
+      if (userStream) {
+        userStream.getTracks().forEach(track => track.stop()); 
+      }
       return rest;
     });
   };
+  
 
   const toggleVideo = () => {
     setIsVideoOn((prev) => !prev);
@@ -288,12 +305,12 @@ const CallRoomPage: React.FC = () => {
       </div>
       <div className="h-[83%] w-full">
         <div className="h-[65%] flex justify-center items-center">
-          <div className="h-[90%] w-[90%] md:w-[80%] lg:w-[60%] dark:bg-neutral-800 rounded-xl flex flex-col justify-center items-center relative">
+          <div className="h-[90%] w-[90%] md:w-[80%] lg:w-[60%] dark:bg-neutral-800 bg-neutral-600 rounded-xl flex flex-col justify-center items-center relative">
             <p className="text-lg text-white z-50 absolute top-4 left-6">
               {currentUserName}
             </p>
             {isVideoOn ? (
-              <MediaStreamDisplay stream={stream} />
+              <MediaStreamDisplay stream={stream}  userId={currentUserId}  roomId={roomId} />
             ) : (
               <div className="flex flex-col items-center">
                 <img
@@ -316,7 +333,7 @@ const CallRoomPage: React.FC = () => {
               className="flex space-x-3 justify-center items-center"
             >
               {Object.values(remoteStreams).map((remoteStream, index) => (
-                <MediaStreamDisplay key={index} stream={remoteStream} />
+                <MediaStreamDisplay key={index} stream={remoteStream}  userId={remoteStream.userId} endcall={handleEndCall}  removeRemoteStream={() => removeRemoteStream(remoteStream.userId)}  roomId={roomId}/>
               ))}
             </div>
           </div>
@@ -324,13 +341,20 @@ const CallRoomPage: React.FC = () => {
       </div>
       <div className="h-[9%] bg-neutral-200 dark:bg-neutral-800 p-2 w-full flex justify-center items-center">
         <div className="w-[200px] h-[60px] flex justify-around">
-          <div
-            onClick={toggleVideo}
-            className={`h-11 w-11 rounded-full flex justify-center text-white items-center ${
+        <div
+            onClick={() => {
+              if (callType === "video") toggleVideo();
+            }}
+            className={`h-11 w-11 rounded-full flex justify-center items-center text-white ${
               isVideoOn
                 ? "bg-neutral-700 hover:bg-neutral-600"
                 : "bg-red-600 hover:bg-red-500"
-            }`}
+            } ${callType === "audio" && "cursor-not-allowed"}`}
+            title={
+              callType === "audio"
+                ? "Video cannot be turned on in an audio call"
+                : ""
+            }
           >
             {isVideoOn ? <IoVideocam size={22} /> : <IoVideocamOff size={22} />}
           </div>

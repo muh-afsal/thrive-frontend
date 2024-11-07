@@ -45,7 +45,7 @@ const CategoryNavbar: React.FC<CategoryNavbarProps> = ({
   }, []);
 
   return (
-    <section className="w-full bg--400 dark:bg-dark-bg h-16 flex shadow-md z-50 top-0 left-0 dark:border-b dark:border-neutral-700">
+    <section className="w-full bg--400 dark:bg-dark-bg h-16 flex shadow-md z-50 top-0 left-0 dark:border-b  dark:border-neutral-700">
       <div className="w-[70%] h-full flex items-center p-6">
         <div
           className="xl:hidden w-7 h-7 flex justify-center items-center dark:text-neutral-300 rounded-md dark:border-neutral-700 border border-gray-100 cursor-pointer"

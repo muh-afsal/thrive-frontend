@@ -52,7 +52,7 @@ const ChatLayout: React.FC = () => {
   return (
     <div className='w-full dark:bg-neutral-900 h-screen overflow-hidden'>
       <div className='h-full flex bg--100 relative'>
-        <div className={`bg--400 h-full border-r border-slate-200 dark:border-neutral-700 transition-all duration-300 ease-in-out 
+        <div className={`bg--400 h-full border-r border-neutral-300 dark:border-neutral-700 transition-all duration-300 ease-in-out 
                          ${isSmallScreen ? (isSidebarOpen ? 'w-16' : 'w-0') : 'w-16'} 
                          overflow-hidden z-50`}>
           <NavSidebar />
