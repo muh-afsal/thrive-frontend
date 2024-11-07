@@ -12,6 +12,8 @@ import { CLIENT_API } from "@/axios";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { CKEditor } from '@ckeditor/ckeditor5-react';
+import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 
 interface EditBlogModalProps {
   isOpen: boolean;
@@ -215,22 +217,32 @@ const EditBlogModal: React.FC<EditBlogModalProps> = ({
 
           {/* Content */}
           <div className="mb-4">
-            <textarea
-              name="content"
-              value={formik.values.content}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              placeholder="Enter content"
-              className="border bg-slate-100 scrollbar-custom border-gray-300 dark:bg-neutral-700 dark:border-neutral-600 dark:text-white rounded-md p-2 mb-1 w-full focus:outline-none focus:border-blue-200"
-              rows={5}
-            />
-            {formik.touched.content && formik.errors.content ? (
-              <div className="text-red-500 text-sm">
-                {formik.errors.content}
-              </div>
-            ) : null}
-          </div>
-
+  <CKEditor
+    editor={ClassicEditor}
+    data={formik.values.content}
+    onChange={(event, editor) => {
+      const data = editor.getData();
+      formik.setFieldValue("content", data);
+    }}
+    onBlur={() => formik.setFieldTouched("content", true)}
+    config={{
+      placeholder: "Enter content",
+      toolbar: [
+        'undo', 'redo', '|',
+        'bold', 'italic', '|',
+        'paragraph', 'heading', '|',
+        'heading1', 'heading2', 'heading3', '|',
+        'link'
+      ]
+      
+    }}
+  />
+  {formik.touched.content && formik.errors.content ? (
+    <div className="text-red-500 text-sm">
+      {formik.errors.content}
+    </div>
+  ) : null}
+</div>
            {/* Thumbnail Upload Section */}
            <div className="mb-4">
             {!previewUrl && (

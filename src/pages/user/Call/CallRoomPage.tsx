@@ -74,8 +74,8 @@ const CallRoomPage: React.FC = () => {
   
     myPeerRef.current = new Peer(currentUserId);
   
-    myPeerRef.current.on("open", (id) => {
-      console.log("User joined the peer with id:", id);
+    myPeerRef.current.on("open", () => {
+      // console.log("User joined the peer with id:", id);
       socket?.emit("join-room", { roomId, userId: currentUserId });
     });
   
@@ -119,7 +119,7 @@ const CallRoomPage: React.FC = () => {
     });
   
     socket?.on("remove-user-stream", ({ userId }) => {
-      console.log(`Removing video stream for user ${userId}`);
+      // console.log(`Removing video stream for user ${userId}`);
       removeRemoteStream(userId);  
     });
   
@@ -244,8 +244,8 @@ const CallRoomPage: React.FC = () => {
     };
   
     try {
-      const response = await CLIENT_API.post("/media/save-callLogs", callLog, config);
-      console.log(response, 'response of the save call logs');
+      await CLIENT_API.post("/media/save-callLogs", callLog, config);
+      // console.log(response, 'response of the save call logs');
     } catch (error) {
       console.log(error, 'error in saving call logs');
     }

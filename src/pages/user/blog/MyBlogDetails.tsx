@@ -12,6 +12,7 @@ import { TbSend2 } from "react-icons/tb";
 import EditBlogModal from "./EditBlogModal";
 import ConfirmationModal from "@/components/modals/ConfirmationModal";
 import { config } from "@/common/configuratoins";
+import DOMPurify from "dompurify";
 
 const MyBlogDetail: React.FC = () => {
   const { blogId } = useParams();
@@ -29,6 +30,26 @@ const MyBlogDetail: React.FC = () => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const navigate=useNavigate()
+  const sanitizedContent = DOMPurify.sanitize(blog?.content || "", {
+    ALLOWED_TAGS: [
+      "p",
+      "br",
+      "strong",
+      "em",
+      "u",
+      "h1",
+      "h2",
+      "h3",
+      "h4",
+      "h5",
+      "h6",
+      "ul",
+      "ol",
+      "li",
+      "a",
+    ],
+    ALLOWED_ATTR: ["href", "target"],
+  });
 
   const toggleDropdown = () => {
     setIsOpen((prev) => !prev);
@@ -290,8 +311,14 @@ const MyBlogDetail: React.FC = () => {
         )}
       </div>
       <p className="mt-5 dark:text-neutral-500 text-xl leading-[50px] font-sans">
-        {blog.content}
+        {/* {blog.content} */}
+        <div
+          className="prose dark:prose-invert mt-5 text-xl leading-[50px] font-sans"
+          dangerouslySetInnerHTML={{ __html: sanitizedContent }}
+        />
       </p>
+
+      
       {/* Message Panel */}
       <div
         className={`fixed top-0 right-0 h-full w-[350px] lg:w-[400px]  rounded-lg shadow-[inset_0px_0px_7px_0px_#D3D3D3] dark:shadow-[inset_0px_0px_7px_0px_#000000] bg-white dark:bg-dark-bg transition-transform duration-300 transform z-50 ${

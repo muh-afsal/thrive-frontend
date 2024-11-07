@@ -10,6 +10,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@ckeditor/ckeditor5-build-classic": "^43.3.1",
+    "@ckeditor/ckeditor5-react": "^9.3.1",
     "@cloudinary/react": "^1.13.0",
     "@cloudinary/url-gen": "^1.20.0",
     "@emotion/react": "^11.13.3",
@@ -22,10 +24,14 @@
     "@reduxjs/toolkit": "^2.2.7",
     "@stripe/react-stripe-js": "^2.8.0",
     "@stripe/stripe-js": "^4.4.0",
+    "@types/dompurify": "^3.0.5",
     "@types/jwt-decode": "^3.1.0",
     "@types/uuid": "^10.0.0",
     "axios": "^1.7.3",
+    "ckeditor5": "^43.3.1",
+    "ckeditor5-premium-features": "^43.3.1",
     "cloudinary-core": "^2.13.1",
+    "dompurify": "^3.1.7",
     "emoji-picker-react": "^4.12.0",
     "formik": "^2.4.6",
     "js-cookie": "^3.0.5",

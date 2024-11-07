@@ -12,6 +12,9 @@ import { CLIENT_API } from "@/axios";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 import { useNavigate } from "react-router-dom";
+import { CKEditor } from '@ckeditor/ckeditor5-react';
+import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
+// import '@ckeditor/ckeditor5-build-classic/build/ckeditor.css';
 
 interface AddBlogModalProps {
   isOpen: boolean;
@@ -28,7 +31,7 @@ const AddBlogModal: React.FC<AddBlogModalProps> = ({ isOpen, onClose }) => {
   const [attachmentType, setAttachmentType] = useState<"image" | "video">(
     "image"
   );
-  const navigate=useNavigate()
+  const navigate = useNavigate();
   const [attachment, setAttachment] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [attachmentPreviewUrl, setAttachmentPreviewUrl] = useState<
@@ -79,16 +82,12 @@ const AddBlogModal: React.FC<AddBlogModalProps> = ({ isOpen, onClose }) => {
           ...values,
           thumbnail: uploadedUrlThumbnail || null,
           attachmentType,
-          author:currentUserId,
+          author: currentUserId,
           attachment: uploadedUrlAttachment || null,
         };
 
         try {
-        await CLIENT_API.post(
-            "/media/add-blog",
-            NewBlogData
-          );
-
+          await CLIENT_API.post("/media/add-blog", NewBlogData);
         } catch (error) {
           console.error("Error adding new blog via API:", error);
           throw new Error("Blog API request failed");
@@ -96,7 +95,7 @@ const AddBlogModal: React.FC<AddBlogModalProps> = ({ isOpen, onClose }) => {
       } catch (error) {
         console.error("Error during blog upload process:", error);
       } finally {
-        navigate(`/blog`)
+        navigate(`/blog`);
         setIsLoading(false);
         handleClose();
       }
@@ -180,8 +179,6 @@ const AddBlogModal: React.FC<AddBlogModalProps> = ({ isOpen, onClose }) => {
             ) : null}
           </div> */}
 
-         
-
           {/* Heading */}
           <div className="mb-4">
             <input
@@ -202,25 +199,36 @@ const AddBlogModal: React.FC<AddBlogModalProps> = ({ isOpen, onClose }) => {
 
           {/* Content */}
           <div className="mb-4">
-            <textarea
-              name="content"
-              value={formik.values.content}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              placeholder="Enter content"
-              className="border bg-slate-100 border-gray-300 dark:bg-neutral-700 dark:border-neutral-600 dark:text-white rounded-md p-2 mb-1 w-full focus:outline-none focus:border-blue-200"
-              rows={6}
-            />
-            {formik.touched.content && formik.errors.content ? (
-              <div className="text-red-500 text-sm">
-                {formik.errors.content}
-              </div>
-            ) : null}
-          </div>
+  <CKEditor
+    editor={ClassicEditor}
+    data={formik.values.content}
+    onChange={(event, editor) => {
+      const data = editor.getData();
+      formik.setFieldValue("content", data);
+    }}
+    onBlur={() => formik.setFieldTouched("content", true)}
+    config={{
+      placeholder: "Enter content",
+      toolbar: [
+        'undo', 'redo', '|',
+        'bold', 'italic', '|',
+        'paragraph', 'heading', '|',
+        'heading1', 'heading2', 'heading3', '|',
+        'link'
+      ]
+      
+    }}
+  />
+  {formik.touched.content && formik.errors.content ? (
+    <div className="text-red-500 text-sm">
+      {formik.errors.content}
+    </div>
+  ) : null}
+</div>
 
 
-           {/* Thumbnail Upload Section */}
-           <div className="mb-4">
+          {/* Thumbnail Upload Section */}
+          <div className="mb-4">
             {!previewUrl && (
               <div className="border bg-slate-100 border-gray-300 dark:bg-neutral-700 dark:border-neutral-500 border-dashed dark:text-white rounded-md py-9 w-full">
                 <label className="cursor-pointer flex flex-col items-center justify-center">
@@ -239,7 +247,7 @@ const AddBlogModal: React.FC<AddBlogModalProps> = ({ isOpen, onClose }) => {
           </div>
 
           {previewUrl && (
-            <div  className="relative w-[200px] mb-8">
+            <div className="relative w-[200px] mb-8">
               <img
                 src={previewUrl}
                 alt="Thumbnail Preview"

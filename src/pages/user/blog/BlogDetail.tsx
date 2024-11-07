@@ -10,6 +10,7 @@ import { ArrowRight } from "lucide-react";
 import { FaRegFaceSmile } from "react-icons/fa6";
 import Picker from "emoji-picker-react";
 import { TbSend2 } from "react-icons/tb";
+import DOMPurify from "dompurify";
 
 const BlogDetail: React.FC = () => {
   const { blogId } = useParams();
@@ -23,8 +24,27 @@ const BlogDetail: React.FC = () => {
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [commentInput, setCommentInput] = useState("");
   const emojiPickerRef = useRef(null);
-
   const currentUserId = data?._id;
+  const sanitizedContent = DOMPurify.sanitize(blog?.content || "", {
+    ALLOWED_TAGS: [
+      "p",
+      "br",
+      "strong",
+      "em",
+      "u",
+      "h1",
+      "h2",
+      "h3",
+      "h4",
+      "h5",
+      "h6",
+      "ul",
+      "ol",
+      "li",
+      "a",
+    ],
+    ALLOWED_ATTR: ["href", "target"],
+  });
 
   const handleCommentInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setCommentInput(e.target.value);
@@ -44,7 +64,7 @@ const BlogDetail: React.FC = () => {
       };
 
       try {
-       await CLIENT_API.post("/media/add-blog", NewBlogData);
+        await CLIENT_API.post("/media/add-blog", NewBlogData);
         setRefresh((prev) => !prev);
       } catch (error) {
         console.error("Error adding comment via API:", error);
@@ -81,7 +101,7 @@ const BlogDetail: React.FC = () => {
     };
 
     try {
-       await CLIENT_API.post("/media/add-blog", NewBlogData);
+      await CLIENT_API.post("/media/add-blog", NewBlogData);
       setRefresh((prev) => !prev);
     } catch (error) {
       console.error("Error adding new blog via API:", error);
@@ -142,8 +162,8 @@ const BlogDetail: React.FC = () => {
         {blog.heading}
       </h2>
       <p className="text-sm  dark:text-neutral-400 text-neutral-500">
-              {timeAgo(blog.createdAt)}
-            </p>
+        {timeAgo(blog.createdAt)}
+      </p>
       <div className="mt-3 flex items-center">
         <div className="flex items-center bg--500 w-full ">
           <div className="flex items-center w-[50%]">
@@ -154,7 +174,6 @@ const BlogDetail: React.FC = () => {
             <h3 className="ml-3 text-neutral-500 text-sm dark:text-neutral-400">
               {blog.author.firstname} {blog.author.lastname}
             </h3>
-          
           </div>
           <div className="bg--400 w-[50%] dark:text-neutral-400 text-neutral-700 flex gap-8 md:gap-20 justify-end py-2">
             <span className="flex gap-1 cursor-pointer">
@@ -210,7 +229,11 @@ const BlogDetail: React.FC = () => {
         )}
       </div>
       <p className="mt-5 dark:text-neutral-500 text-xl leading-[50px] font-sans">
-        {blog.content}
+        {/* {blog.content} */}
+        <div
+          className="prose dark:prose-invert mt-5 text-xl leading-[50px] font-sans"
+          dangerouslySetInnerHTML={{ __html: sanitizedContent }}
+        />
       </p>
 
       {/* Message Panel */}
