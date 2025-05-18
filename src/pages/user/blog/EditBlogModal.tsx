@@ -220,7 +220,7 @@ const EditBlogModal: React.FC<EditBlogModalProps> = ({
   <CKEditor
     editor={ClassicEditor}
     data={formik.values.content}
-    onChange={(event, editor) => {
+    onChange={(_, editor) => {
       const data = editor.getData();
       formik.setFieldValue("content", data);
     }}

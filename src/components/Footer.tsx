@@ -1,5 +1,5 @@
 import type React from "react"
-import { Facebook, Twitter, Instagram, Linkedin, Mail, Phone, MapPin, ArrowRight, Globe } from "lucide-react"
+import { Facebook, Twitter, Instagram, Linkedin, Mail, Phone, MapPin, ArrowRight } from "lucide-react"
 import thriveLogo from '../assets/iocns/thrive-icon.png'
 const Footer: React.FC = () => {
   return (

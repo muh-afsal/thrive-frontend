@@ -15,8 +15,6 @@ import { ChevronRight } from "lucide-react"
 
 // Add this after the imports
 const Landing: React.FC = () => {
-  const [planMonthly, setPlan] = useState<boolean>(false)
-
   // Add this CSS class for the grid pattern
   const gridPatternStyle = `
   @keyframes float {

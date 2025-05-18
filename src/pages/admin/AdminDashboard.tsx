@@ -26,18 +26,13 @@ interface ChartData {
 }
 
 const AdminDashboard: React.FC = () => {
-  const [statData, setStatData] = useState<StatData>({
+  const [statData] = useState<StatData>({
     totalMembers: 1000,
     totalTrainers: 50,
     totalPrograms: 30,
     totalIncome: 50000,
   });
   const [chartData, setChartData] = useState<ChartData | null>(null);
-  const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string | null>(null);
-  const [refresh, setRefresh] = useState<boolean>(false);
-
- 
 
   useEffect(() => {
     const dummyChartData: ChartData = {
@@ -53,8 +48,6 @@ const AdminDashboard: React.FC = () => {
     };
     setChartData(dummyChartData);
   }, [statData]);
-
- 
 
   return (
     <>
@@ -74,8 +67,7 @@ const AdminDashboard: React.FC = () => {
             <BarChart />
           </div>
           <div className="md:w-[50%] w-full h-full dark:bg-neutral-800 bg-neutral-100 rounded-xl p-2 overflow-y-auto scrollbar-custom">
-       
-            <DoughnutChart chartData={chartData} loading={loading} error={error} />
+            <DoughnutChart chartData={chartData} loading={false} error={null} />
           </div>
         </div>
         <div className="h-[40%] w-full px-4 p-3 pt-0 pb-4 flex gap-4">
