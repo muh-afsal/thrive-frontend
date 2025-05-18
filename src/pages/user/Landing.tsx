@@ -1,7 +1,6 @@
 "use client"
 
 import type React from "react"
-import { useState } from "react"
 import Footer from "@/components/Footer"
 import LandingNavbar from "@/components/navbars/LandingNavbar"
 import potratesImage from "@/assets/images/landing/potrait.png"
