@@ -32,6 +32,7 @@ export type Participant = {
       lastname: string;
       profileImage: string;
     };
+    participants:any;
     createdAt:Date
   }
   

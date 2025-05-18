@@ -28,6 +28,12 @@ import EventLayout from "./pages/user/events/EventLayout";
 import EventDash from "./pages/user/events/EventDash";
 import PastEvents from "./pages/user/events/PastEvents";
 import ConferenceLayout from "./pages/user/conference/ConferenceLayout";
+import AdminLayout from "./pages/admin/AdminLayout";
+import AdminDashboard from "./pages/admin/AdminDashboard";
+import ManageUsers from "./pages/admin/ManageUsers";
+import ManageBlogs from "./pages/admin/ManageBlogs";
+import RoleBasedRoute from "./routes/RoleBasedRoute";
+import PaymentLayout from "./pages/user/subscription/PaymentLayout";
 
 const AppRoutes = () => (
   <Routes>
@@ -52,9 +58,12 @@ const AppRoutes = () => (
       <Route path="/video-call" element={<ConferenceLayout />} />
       <Route path="/call-room/:roomId" element={<CallRoomPage />} />
       <Route path="/completeprofile" element={<Completeprofile />} />
-      <Route path="/payment-start" element={<ProVersionPayment />} />
-      <Route path="/payment-failed" element={<PaymentFailure />} />
-      <Route path="/payment-success" element={<PaymentSuccess />} />
+
+      <Route path="/payment-start" element={<PaymentLayout />}>
+        <Route index element={<ProVersionPayment />} />
+      </Route>
+        <Route path="/payment-failed" element={<PaymentFailure />} />
+        <Route path="/payment-success" element={<PaymentSuccess />} />
 
       <Route path="/blog" element={<BlogLayout />}>
         <Route index element={<BlogListing />} />
@@ -63,10 +72,19 @@ const AppRoutes = () => (
         <Route path="my-blogs" element={<MyBlog />} />
       </Route>
       <Route path="/event" element={<EventLayout />}>
-        <Route index element={<EventDash/>} />
-        <Route  path="/event/past" element={<PastEvents/>} />
+        <Route index element={<EventDash />} />
+        <Route path="/event/past" element={<PastEvents />} />
       </Route>
+
       <Route path="*" element={<Navigate to="/home" />} />
+    </Route>
+    <Route element={<RoleBasedRoute allowedRoles={["admin"]} />}>
+      <Route path="" element={<Navigate to="admin" replace />} />
+      <Route path="/admin" element={<AdminLayout />}>
+        <Route index element={<AdminDashboard />} />
+        <Route path="/admin/users" element={<ManageUsers />} />
+        <Route path="/admin/blogs" element={<ManageBlogs />} />
+      </Route>
     </Route>
     <Route path="*" element={<Navigate to="/" />} />
   </Routes>

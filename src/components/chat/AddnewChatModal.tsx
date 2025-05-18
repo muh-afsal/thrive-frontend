@@ -147,7 +147,7 @@ const AddNewChatModal: React.FC<AddNewChatModalProps> = ({
       groupIcon: groupIcon || defaultGroupIcon,
       currentUserId,
     };
-    console.log(groupData,'lllllllllllllllllllllllllllllllllll');
+    // console.log(groupData,'lllllllllllllllllllllllllllllllllll');
     
     try {
       const response = await CLIENT_API.post(

@@ -231,7 +231,7 @@ const BlogDetail: React.FC = () => {
       <p className="mt-5 dark:text-neutral-500 text-xl leading-[50px] font-sans">
         {/* {blog.content} */}
         <div
-          className="prose dark:prose-invert mt-5 text-xl leading-[50px] font-sans"
+          className="prose dark:prose-invert  mt-5 text-xl leading-[50px] font-sans"
           dangerouslySetInnerHTML={{ __html: sanitizedContent }}
         />
       </p>

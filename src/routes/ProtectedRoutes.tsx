@@ -1,6 +1,6 @@
 import React from "react";
 import { Navigate, Outlet } from "react-router-dom";
-import { decodeAccessToken } from "../utils/jwt/jwtService"; // Assuming your decodeAccessToken function is in this file
+import { decodeAccessToken } from "../utils/jwt/jwtService"; 
 
 const ProtectedRoutes: React.FC = () => {
   const token = decodeAccessToken(); 

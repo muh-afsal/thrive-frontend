@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState, useEffect, useRef } from "react";
 import ContactSearchBar from "@/components/searchBars/ContactSearchbar";
 import UserContact from "@/components/chat/UserContact";
@@ -30,6 +31,7 @@ import { useSocket } from "@/contexts/SocketContext";
 import { ClipLoader } from "react-spinners";
 import { RootState } from "@/redux/store";
 import { useParams } from "react-router-dom";
+import { sendInAppNotification } from "@/utils/notification/notificationService";
 
 type MessageFile = {
   url: string;
@@ -57,11 +59,15 @@ const ChatPage: React.FC = () => {
   const [recordingInterval, setRecordingInterval] = useState<number | null>(
     null
   );
+  const [onlineUsers, setOnlineUsers] = useState<string[]>([]);
+  console.log(onlineUsers,'this is the online user s0000000000000000000000000');
+  
+  const [chatParticipants, setChatParticipants] = useState<string[]>([]);
   const [showRecordingPopup, setShowRecordingPopup] = useState(false);
   const [refresh, setRefresh] = useState<boolean>(false);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const [chatData, setChatData] = useState([]);
-  
+
   // const participantsArray = chatData.map(chat => chat.participants);
   // console.log(chatData,'mmmmmmmmmmmmmmmmmmmmmmmmmmmm');
 
@@ -73,20 +79,38 @@ const ChatPage: React.FC = () => {
     string | null
   >(null);
   const [chatMessages, setChatMessages] = useState<IMessage[]>([]);
-  
+
   const [typing, setTyping] = useState(false);
   const { socket } = useSocket();
   // const socket=mediaSocketService;
   const bottomRef = useRef<HTMLDivElement | null>(null);
 
-  // console.log(
-  //   chatMessages,
-  //   "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%"
-  // );
-
   const currentUser = data;
   const currentUserId = currentUser?._id;
-  
+
+
+
+  useEffect(() => {
+    socket?.on('userStatus', (data: { userId: string; isOnline: boolean; onlineUsers?: string[] }) => {
+      const { userId, isOnline, onlineUsers } = data;
+
+      setOnlineUsers((prevOnlineUsers) => {
+        if (onlineUsers) return onlineUsers;
+
+        if (isOnline && !prevOnlineUsers.includes(userId)) {
+          return [...prevOnlineUsers, userId];
+        } else if (!isOnline) {
+          return prevOnlineUsers.filter((id) => id !== userId);
+        }
+        return prevOnlineUsers;
+      });
+    });
+
+    return () => {
+      socket?.off('userStatus');
+    };
+  }, [socket]);
+
 
 
   useEffect(() => {
@@ -115,7 +139,16 @@ const ChatPage: React.FC = () => {
     if (socket) {
       const handleReceiveMessage = (message: IMessage) => {
         setChatMessages((prevMessages) => [...prevMessages, message]);
-        setRefresh(prev => !prev);
+        setRefresh((prev) => !prev);
+        const Chatparticipants = message.participants;
+        Chatparticipants.forEach((participantId: any) => {
+          const notification = {
+            userId: participantId,
+            message: `New message from ${message.sender.firstname} ${message.sender.lastname}`,
+          };
+
+          sendInAppNotification(notification);
+        });
       };
       socket.on("receiveMessage", handleReceiveMessage);
 
@@ -124,7 +157,7 @@ const ChatPage: React.FC = () => {
         socket.disconnect();
       };
     }
-  }, [socket]);
+  }, [socket, currentUserId]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(e.target.value);
@@ -162,18 +195,21 @@ const ChatPage: React.FC = () => {
   useEffect(() => {
     const fetchAllChats = async () => {
       try {
-        const response = await CLIENT_API.get(`/media/get-all-chats/${currentUserId}`, config);
+        const response = await CLIENT_API.get(
+          `/media/get-all-chats/${currentUserId}`,
+          config
+        );
         const allchatData = response.data.chats;
-        
+
         setChatData(allchatData);
       } catch (error) {
         console.error("Error fetching users", error);
         setChatData([]);
-      } 
+      }
     };
 
     fetchAllChats();
-  }, [newChatAdded,refresh]);
+  }, [newChatAdded, refresh]);
 
   useEffect(() => {
     const fetchAllChatMessages = async () => {
@@ -186,7 +222,7 @@ const ChatPage: React.FC = () => {
           const allChatMessages = response.data.chatMessages;
 
           setChatMessages(allChatMessages);
-          // console.log(allChatMessages);
+          // console.log(allChatMessagfes);
         }
       } catch (error) {
         console.error("Error fetching messages", error);
@@ -243,7 +279,9 @@ const ChatPage: React.FC = () => {
             content: inputValue || "",
             createdAt: new Date(),
             sender: sender,
+            participants: chatParticipants,
           };
+
           if (socket) {
             socket.emit("newMessage", { obj: ChatsocketPayload });
           } else {
@@ -255,7 +293,7 @@ const ChatPage: React.FC = () => {
           setAudioBlob(null);
           setShowPicker(false);
           setUploadedFileUrls([]);
-          setRefresh(prev => !prev);
+          setRefresh((prev) => !prev);
         }
       } catch (error) {
         console.log(error);
@@ -446,6 +484,12 @@ const ChatPage: React.FC = () => {
       socket.emit("joinRoom", chatId);
     }
 
+    const participants = chat.participants
+      .filter((participant) => participant._id !== currentUserId)
+      .map((participant) => participant._id);
+    setChatParticipants(participants);
+    setRefresh((prev) => !prev);
+
     const chatName = chat.isGroupChat
       ? chat.name
       : chat.participants
@@ -456,7 +500,6 @@ const ChatPage: React.FC = () => {
           .join(", ");
 
     setSelectedChatName(chatName);
-
     const profileImage = chat.isGroupChat
       ? chat.groupIcon
       : chat.participants.filter(
@@ -478,7 +521,6 @@ const ChatPage: React.FC = () => {
 
   const renderChatHeader = () => {
     return (
-      
       <div className="h-[9%] bg--400 flex border-b border-neutral-300 dark:border-neutral-700">
         <div className="w-[70px] bg--500 h-full flex justify-center items-center ">
           <img
@@ -493,7 +535,8 @@ const ChatPage: React.FC = () => {
               {selectedChatName || "Full Name"}
             </h1>
             <h4 className="text-sm text-gray-600 dark:text-neutral-400">
-              {typing ? "Typing..." : "All chats are encrypted"}
+              {/* {typing ? "Typing..." : "All chats are encrypted"} */}
+              All chats are encrypted
             </h4>
           </div>
           <div className="w-20px bg--400 flex justify-center items-center">
@@ -508,89 +551,89 @@ const ChatPage: React.FC = () => {
   };
 
   const renderContacts = () => {
-    const contacts: Chat[] = chatData; 
+    const contacts: Chat[] = chatData;
 
-     contacts.sort((a, b) => 
+    contacts.sort(
+      (a, b) =>
         new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
     );
-  
+
     const contactsAvailable = contacts.length > 0;
 
     if (chatType === "all-inbox" || chatType === "groups") {
-        if (contactsAvailable) {
-            return (
-                <>
-                    {contacts.map((chat: Chat) => {
-                        const otherParticipant = chat.participants.find(
-                            (participant) => participant._id !== currentUserId
-                        );
+      if (contactsAvailable) {
+        return (
+          <>
+            {contacts.map((chat: Chat) => {
+              const otherParticipant = chat.participants.find(
+                (participant) => participant._id !== currentUserId
+              );
 
-                        return (
-                            <div
-                                key={chat._id}
-                                onClick={() => handleChatOpen(chat._id, chat)}
-                            >
-                                <UserContact
-                                    profileImage={
-                                        chat.isGroupChat
-                                            ? chat.groupIcon
-                                            : otherParticipant?.profileImage ||
-                                              "https://res.cloudinary.com/djo6yu43t/image/upload/v1725124534/IMG_20240831_224439_v7rnsg.jpg"
-                                    }
-                                    fullName={
-                                        chat.isGroupChat
-                                            ? chat.name
-                                            : `${otherParticipant?.firstname ?? ''} ${otherParticipant?.lastname ?? ''}`
-                                    }
-                                    lastMessage={
-                                        chat.lastMessage ? chat.lastMessage.content : "No messages yet"
-                                    }
-                                />
-                            </div>
-                        );
-                    })}
-                </>
-            );
-        } else {
-            return (
-                <div className="flex justify-center items-center h-full">
-                    <p className="py-1 bg-slate-200 rounded-lg px-4 dark:bg-neutral-800 dark:text-white shadow-[0px_2px_3px_-1px_rgba(0,0,0,0.1),0px_1px_0px_0px_rgba(25,28,33,0.02),0px_0px_0px_1px_rgba(25,28,33,0.08)]">
-                        No recent chat,{" "}
-                        <button className="text-blue-500" onClick={handleOpenModal}>
-                            create a new chat.
-                        </button>
-                    </p>
+              return (
+                <div
+                  key={chat._id}
+                  onClick={() => handleChatOpen(chat._id, chat)}
+                >
+                  <UserContact
+                    profileImage={
+                      chat.isGroupChat
+                        ? chat.groupIcon
+                        : otherParticipant?.profileImage ||
+                          "https://res.cloudinary.com/djo6yu43t/image/upload/v1725124534/IMG_20240831_224439_v7rnsg.jpg"
+                    }
+                    fullName={
+                      chat.isGroupChat
+                        ? chat.name
+                        : `${otherParticipant?.firstname ?? ""} ${
+                            otherParticipant?.lastname ?? ""
+                          }`
+                    }
+                    lastMessage={
+                      chat.lastMessage
+                        ? chat.lastMessage.content
+                        : "No messages yet"
+                    }
+                  />
                 </div>
-            );
-        }
+              );
+            })}
+          </>
+        );
+      } else {
+        return (
+          <div className="flex justify-center items-center h-full">
+            <p className="py-1 bg-slate-200 rounded-lg px-4 dark:bg-neutral-800 dark:text-white shadow-[0px_2px_3px_-1px_rgba(0,0,0,0.1),0px_1px_0px_0px_rgba(25,28,33,0.02),0px_0px_0px_1px_rgba(25,28,33,0.08)]">
+              No recent chat,{" "}
+              <button className="text-blue-500" onClick={handleOpenModal}>
+                create a new chat.
+              </button>
+            </p>
+          </div>
+        );
+      }
     }
-};
-
-  
-  
+  };
 
   return (
     <div className="dark:bg-neutral-900 w-full  flex h-[100%] relative">
-   
-        <div className="contacts-listing scrollbar-custom bg--300 w-[35%] pt-4 border-r border-neutral-300 dark:border-neutral-700 overflow-y-auto flex flex-col transition-transform duration-300">
-          <div className="border-b border-neutral-300 dark:border-neutral-700">
-            <ContactSearchBar />
-            <div
-              onClick={handleOpenModal}
-              className="bg--400 flex justify-end items-center px-6 pt-2 pb-2 relative group"
-            >
-              <FiEdit
-                className="cursor-pointer hover:text-thrive-blue dark:text-neutral-500"
-                size={20}
-              />
-              <span className="tooltip opacity-0 group-hover:opacity-100 transition-opacity duration-200 absolute bg-gray-500 text-white text-xs rounded py-1 px-2 bottom-full ">
-                Add chat
-              </span>
-            </div>
+      <div className="contacts-listing scrollbar-custom bg--300 w-[35%] pt-4 border-r border-neutral-300 dark:border-neutral-700 overflow-y-auto flex flex-col transition-transform duration-300">
+        <div className="border-b border-neutral-300 dark:border-neutral-700">
+          <ContactSearchBar />
+          <div
+            onClick={handleOpenModal}
+            className="bg--400 flex justify-end items-center px-6 pt-2 pb-2 relative group"
+          >
+            <FiEdit
+              className="cursor-pointer hover:text-thrive-blue dark:text-neutral-500"
+              size={20}
+            />
+            <span className="tooltip opacity-0 group-hover:opacity-100 transition-opacity duration-200 absolute bg-gray-500 text-white text-xs rounded py-1 px-2 bottom-full ">
+              Add chat
+            </span>
           </div>
-          {renderContacts()}
         </div>
-      
+        {renderContacts()}
+      </div>
 
       <div
         className={`fixed inset-0 z-50 ${
@@ -628,7 +671,9 @@ const ChatPage: React.FC = () => {
                         key={message._id}
                         isSender={isSender}
                         message={message}
-                        sender={message.sender.firstname + message.sender.lastname}
+                        sender={
+                          message.sender.firstname + message.sender.lastname
+                        }
                         // isgroup={chatData.i}
                       />
                     );

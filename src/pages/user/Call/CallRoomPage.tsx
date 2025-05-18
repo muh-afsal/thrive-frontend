@@ -10,10 +10,10 @@ import { IoArrowBack } from "react-icons/io5";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 import Peer from "peerjs";
-import { toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 import { CLIENT_API } from "@/axios";
 import { config } from "@/common/configuratoins";
+import toast from "react-hot-toast";
+import { sendInAppNotification } from "../../../utils/notification/notificationService";
 
 
 
@@ -75,7 +75,6 @@ const CallRoomPage: React.FC = () => {
     myPeerRef.current = new Peer(currentUserId);
   
     myPeerRef.current.on("open", () => {
-      // console.log("User joined the peer with id:", id);
       socket?.emit("join-room", { roomId, userId: currentUserId });
     });
   
@@ -119,7 +118,6 @@ const CallRoomPage: React.FC = () => {
     });
   
     socket?.on("remove-user-stream", ({ userId }) => {
-      // console.log(`Removing video stream for user ${userId}`);
       removeRemoteStream(userId);  
     });
   
@@ -204,23 +202,28 @@ const CallRoomPage: React.FC = () => {
   };
 
   const copyCallLink = () => {
+
+   const notification={
+     userId:currentUserId,
+     message:'Call link copied to clipboard!'
+   }
+   
+
     const callLink = window.location.href;
   
     navigator.clipboard.writeText(callLink)
       .then(() => {
-        toast.success("Call link copied to clipboard!", {
-          position: "top-center", 
-          autoClose: 2000,
-        });
+        toast.success("Call link copied to clipboard!");
+        sendInAppNotification(notification)
       })
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       .catch(() => {
-        toast.error("Failed to copy the link.", {
-          position: "top-center",
-          autoClose: 2000,
-        });
+        toast.error("Failed to copy the link.");
       });
   };
+
+
+ 
 
 
   const handleEndCall = async () => {

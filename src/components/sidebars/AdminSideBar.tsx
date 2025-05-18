@@ -1,6 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
-import { RootState } from '@/redux/store';
 
 interface SidebarItem {
   name: string;
@@ -13,9 +11,8 @@ interface SidebarProps {
   items: SidebarItem[];
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ items }) => {
-  const { data } = useSelector((state: RootState) => state.user);
-  const profileImage = data?.profileImage;
+const AdminSideBar: React.FC<SidebarProps> = ({ items }) => {
+  const profileImage = 'https://res.cloudinary.com/djo6yu43t/image/upload/v1728840453/IMG_20240831_224439_mo5zvi.jpg';
 
   const [activeItem, setActiveItem] = useState<string>(localStorage.getItem('activeItem') || items[0]?.name || '');
 
@@ -39,7 +36,7 @@ const Sidebar: React.FC<SidebarProps> = ({ items }) => {
           <img className='object-cover w-full h-full' src={profileImage} alt="Profile" />
         </div>
         <h1 className='font-semibold text-lg mt-4 dark:text-white'>
-          {data?.firstname} {data?.lastname}
+          Admin
         </h1>
       </div>
       <ul className='flex-grow'>
@@ -68,4 +65,4 @@ const Sidebar: React.FC<SidebarProps> = ({ items }) => {
   );
 };
 
-export default Sidebar;
+export default AdminSideBar;

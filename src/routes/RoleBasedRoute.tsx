@@ -1,25 +1,30 @@
-// import React from 'react';
-// import { Route, Navigate } from 'react-router-dom';
-// import { useSelector } from 'react-redux';
-// import { selectAuthState } from '../redux/reducers/authSlice';
+import React from 'react';
+import { Navigate, Outlet } from 'react-router-dom';
+import toast from 'react-hot-toast';
+import { useSelector } from 'react-redux';
+import { RootState } from '@/redux/store';
 
-// interface RoleBasedRouteProps {
-//   element: React.ReactNode;
-//   path: string;
-//   allowedRoles: string[];
-// }
+interface RoleBasedRouteProps {
+  allowedRoles: string[];
+}
 
-// const RoleBasedRoute: React.FC<RoleBasedRouteProps> = ({ element, path, allowedRoles }) => {
-//   const { isAuthenticated, user } = useSelector(selectAuthState);
+const RoleBasedRoute: React.FC<RoleBasedRouteProps> = ({ allowedRoles }) => {
+  const { data } = useSelector((state: RootState) => state.user);
+  console.log(data,'thisi is the data from role based thing');
+  
 
-//   const hasRequiredRole = user && allowedRoles.includes(user.role);
+  if (!data || !data.role) {
+    return <Navigate to="/login" />;
+  }
 
-//   return (
-//     <Route
-//       path={path}
-//       element={isAuthenticated && hasRequiredRole ? element : <Navigate to="/unauthorized" />}
-//     />
-//   );
-// };
+  const role: string = data.role;
 
-// export default RoleBasedRoute;
+  if (!allowedRoles.includes(role)) {
+    toast.error("You are not allowed to access this route!");
+    return <Navigate to="/unauthorized" />;
+  }
+
+  return <Outlet />;
+};
+
+export default RoleBasedRoute;

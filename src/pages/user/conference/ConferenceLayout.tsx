@@ -10,7 +10,7 @@ import { CLIENT_API } from "@/axios";
 import { config } from "@/common/configuratoins";
 import { Link, Copy, Video  } from "lucide-react"; 
 import { useNavigate } from "react-router-dom"; 
-import { toast } from "react-toastify";
+import toast from "react-hot-toast";
 
 const ConferenceLayout: React.FC = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -34,7 +34,6 @@ const ConferenceLayout: React.FC = () => {
     }
   };
 
-  // Handle room link from socket event and open modal
   useEffect(() => {
     socket?.on("room-created", ({ roomId }) => {
       const link = `${window.location.origin}/call-room/${roomId}`;
@@ -45,10 +44,7 @@ const ConferenceLayout: React.FC = () => {
 
   const handleCopyToClipboard = () => {
     navigator.clipboard.writeText(roomLink);
-    toast.success("Call link copied to clipboard!", {
-      position: "top-center", 
-      autoClose: 2000,
-    });
+    toast.success("Call link copied to clipboard!");
   };
 
   const handleJoinCall = () => {

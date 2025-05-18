@@ -9,9 +9,9 @@ import { RootState } from "@/redux/store";
 import { useSelector } from "react-redux";
 import { CLIENT_API } from "@/axios";
 import { config } from "@/common/configuratoins";
-import { Link, Phone, Copy  } from "lucide-react"; // added Clipboard icon
-import { useNavigate } from "react-router-dom"; // added navigate for routing
-import { toast } from "react-toastify";
+import { Link, Phone, Copy  } from "lucide-react"; 
+import { useNavigate } from "react-router-dom"; 
+import toast from "react-hot-toast";
 
 const CallLayout: React.FC = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -46,10 +46,7 @@ const CallLayout: React.FC = () => {
 
   const handleCopyToClipboard = () => {
     navigator.clipboard.writeText(roomLink);
-    toast.success("Call link copied to clipboard!", {
-      position: "top-center", 
-      autoClose: 2000,
-    });
+    toast.success("Call link copied to clipboard!");
   };
 
   const handleJoinCall = () => {

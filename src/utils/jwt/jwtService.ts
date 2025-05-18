@@ -29,7 +29,6 @@ export const decodeAccessToken = (): DecodedToken | null => {
   return null;
 };
 
-// Function to check if the token is expired
 export const isTokenExpired = (): boolean => {
   const decodedToken = decodeAccessToken();
   if (decodedToken) {
@@ -39,16 +38,14 @@ export const isTokenExpired = (): boolean => {
   return true;
 };
 
-// Function to set the access token in cookies
 export const setAccessToken = (token: string): void => {
   Cookies.set('accessToken', token, { 
-    expires: 1, // 1 day
+    expires: 1, 
     secure: true,
     sameSite: 'strict'
   });
 };
 
-// Function to remove the access token from cookies
 export const removeAccessToken = (): void => {
   Cookies.remove('accessToken');
 };

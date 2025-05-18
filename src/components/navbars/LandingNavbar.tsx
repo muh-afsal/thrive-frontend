@@ -29,7 +29,6 @@ export default function Header() {
 
           </ul>
           <ul className="flex">
-          <ThemeToggle  />
             <Link to="/signup ">
               <li
                 className={`px-3 py-1 font-semibold hover:text-blue-500 dark:hover:text-blue-500 rounded-md `}
@@ -44,6 +43,7 @@ export default function Header() {
                 Login
               </li>
             </Link>
+            <ThemeToggle  />
           </ul>
         </div>
         {/* <Link to="/signup">

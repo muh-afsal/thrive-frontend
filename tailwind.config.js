@@ -4,7 +4,6 @@ export default {
   content: [
     "./src/**/*.{js,jsx,ts,tsx}",
   ],
-  // #1A1A1A
   theme: {
     extend: {
       colors: {
